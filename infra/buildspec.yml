@@ -1,0 +1,35 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_REGION: eu-west-1     # troca se estiveres noutra região
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+      - REGION=$AWS_REGION
+      - BACKEND_REPO="$ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/auto-blog-backend"
+      - FRONTEND_REPO="$ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/auto-blog-frontend"
+      - aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
+
+  build:
+    commands:
+      - echo Building backend image...
+      - docker build -t auto-blog-backend ./backend
+      - docker tag auto-blog-backend:latest $BACKEND_REPO:latest
+
+      - echo Building frontend image...
+      - docker build -t auto-blog-frontend ./frontend
+      - docker tag auto-blog-frontend:latest $FRONTEND_REPO:latest
+
+  post_build:
+    commands:
+      - echo Pushing images to ECR...
+      - docker push $BACKEND_REPO:latest
+      - docker push $FRONTEND_REPO:latest
+
+artifacts:
+  files:
+    - infra/docker-compose.yml
