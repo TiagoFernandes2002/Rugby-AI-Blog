@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ../backend
+    container_name: auto-blog-backend
+    ports:
+      - "4000:4000"
+    volumes:
+      # guardar dados dos artigos numa pasta local (para não desaparecerem)
+      - ../backend/data:/app/data
+
+  frontend:
+    build: ../frontend
+    container_name: auto-blog-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
