@@ -31,17 +31,18 @@ app.get('/articles/:id', (req, res) => {
   res.json(article);
 });
 
-// Enquanto estás a testar, usa a cada minuto:
-cron.schedule('* * * * *', async () => {
-  console.log('Running scheduled article generation...');
+// Agora: 1 vez por semana, segunda-feira às 09:00
+cron.schedule('0 9 * * 1', async () => {
+  console.log('Running weekly article generation...');
   try {
     const article = await generateArticle();
     const saved = addArticle(article);
-    console.log('New article generated:', saved.title);
+    console.log('New weekly article generated:', saved.title);
   } catch (err) {
-    console.error('Error generating article:', err);
+    console.error('Error generating weekly article:', err);
   }
 });
+
 
 app.listen(PORT, () => {
   console.log(`Backend running on port ${PORT}`);
