@@ -15,12 +15,12 @@ frontend/dist/
 frontend/.vite/
 
 # ---- Env / keys (IMPORTANTE) ----
+# ignorar apenas .env "normais"
 .env
-*.env
+*.env.local
 backend/.env
 frontend/.env
-backend/.env.*
-frontend/.env.*
+
 
 # ---- Logs ----
 npm-debug.log*
