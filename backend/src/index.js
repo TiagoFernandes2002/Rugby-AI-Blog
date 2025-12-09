@@ -14,6 +14,8 @@ const {
   generateVlogArticle,
 } = require("./aiClient");
 
+const { fetchStandings } = require("./rugbyStandings");
+
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -22,7 +24,7 @@ app.use(express.json());
 
 console.log("[CRON] Scheduler booted at", new Date().toISOString());
 
-// --- Routes for articles ---
+// ---------- ROTAS DE ARTIGOS ----------
 app.get("/articles", (req, res) => {
   res.json(getAll());
 });
@@ -34,13 +36,11 @@ app.get("/articles/:id", (req, res) => {
   res.json(article);
 });
 
-// (optional) healthcheck
 app.get("/", (req, res) => {
   res.json({ status: "ok", source: "Rugby AI backend" });
 });
 
-// ---------- CRON 1: Monday 20:00 – historic weekly round-ups ----------
-// "0 20 * * 1" → Monday at 20:00 "* * * * *" for testing every minute
+// ---------- CRON 1: weekly round-ups ----------
 cron.schedule("24 15 * * *", async () => {
   console.log("📰 [CRON] Historic weekly round-ups (Monday 20:00)");
 
@@ -52,10 +52,14 @@ cron.schedule("24 15 * * *", async () => {
 
       const article = await generateRoundupArticle(summaryText);
 
-      // Prefix article title with league and season
-      article.title = `${leagueName} ${season} – Weekly Round-Up: ${article.title}`;
+      const saved = addArticle({
+        ...article,
+        title: `${leagueName} ${season} – Weekly Round-Up: ${article.title}`,
+        type: "roundup",
+        league: leagueKey,
+        season,
+      });
 
-      const saved = addArticle(article);
       console.log(
         `✅ Round-up article saved for ${leagueKey}: ${saved.title}`
       );
@@ -65,8 +69,7 @@ cron.schedule("24 15 * * *", async () => {
   }
 });
 
-// ---------- CRON 2: Wednesday 20:00 – vlog/opinion style article ----------
-
+// ---------- CRON 2: weekly vlog ----------
 const VLOG_TOPICS = [
   "How modern rugby kicking strategies create territorial pressure",
   "Why defense systems have changed so much in the last decade",
@@ -77,23 +80,14 @@ const VLOG_TOPICS = [
   "Pendulum defense systems and how backfield coverage works",
 ];
 
-function pickRandomTopic() {
-  const idx = Math.floor(Math.random() * VLOG_TOPICS.length);
-  return VLOG_TOPICS[idx];
-}
-
 function getPreviousVlogArticles() {
   const all = getAll();
-  // Only articles marked as vlog (older ones without type can be ignored)
   return all.filter((a) => a.type === "vlog");
 }
 
 function buildPreviousVlogsSummary(max = 10) {
   const vlogs = getPreviousVlogArticles();
-
   if (!vlogs.length) return "";
-
-  // take the most recent
   const recent = vlogs.slice(-max);
 
   return recent
@@ -107,22 +101,13 @@ function buildPreviousVlogsSummary(max = 10) {
 function pickNextVlogTopic() {
   const vlogs = getPreviousVlogArticles();
   const usedTopics = new Set(vlogs.map((v) => v.topic).filter(Boolean));
-
-  // topics not used yet
   const unused = VLOG_TOPICS.filter((t) => !usedTopics.has(t));
 
-  if (unused.length > 0) {
-    const idx = Math.floor(Math.random() * unused.length);
-    return unused[idx];
-  }
-
-  // if all topics have been used, we can reuse, but the AI will have the summary and try a new angle
-  const idx = Math.floor(Math.random() * VLOG_TOPICS.length);
-  return VLOG_TOPICS[idx];
+  const list = unused.length ? unused : VLOG_TOPICS;
+  const idx = Math.floor(Math.random() * list.length);
+  return list[idx];
 }
 
-
-// "0 20 * * 3" → Wednesday at 20:00
 cron.schedule("12 15 * * *", async () => {
   console.log("🎥 [CRON] Weekly vlog-style article (Wednesday 20:00)");
 
@@ -148,7 +133,24 @@ cron.schedule("12 15 * * *", async () => {
   }
 });
 
+// ---------- ROTA /standings ----------
+app.get("/standings", async (req, res) => {
+  try {
+    const leagueParam = req.query.league ?? "TOP14"; // pode ser "TOP14" ou "16"
+    const season = Number(req.query.season) || 2022;
 
+    const table = await fetchStandings(leagueParam, season);
+
+    res.json({
+      league: leagueParam,
+      season,
+      table,
+    });
+  } catch (err) {
+    console.error("Error fetching standings", err.response?.data || err);
+    res.status(500).json({ error: "Failed to fetch standings" });
+  }
+});
 
 // --------- start server ---------
 app.listen(PORT, () => {
