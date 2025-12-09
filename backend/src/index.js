@@ -20,6 +20,8 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
+console.log("[CRON] Scheduler booted at", new Date().toISOString());
+
 // --- Routes for articles ---
 app.get("/articles", (req, res) => {
   res.json(getAll());
@@ -146,6 +148,9 @@ cron.schedule("30 13 * * *", async () => {
   }
 });
 
+cron.schedule("* * * * *", async () => {
+  console.log("[CRON TEST] Fired at", new Date().toISOString());
+});
 
 // --------- start server ---------
 app.listen(PORT, () => {
