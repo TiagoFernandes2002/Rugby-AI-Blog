@@ -123,7 +123,7 @@ function pickNextVlogTopic() {
 
 
 // "0 20 * * 3" → Wednesday at 20:00
-cron.schedule("55 14 * * *", async () => {
+cron.schedule("12 15 * * *", async () => {
   console.log("🎥 [CRON] Weekly vlog-style article (Wednesday 20:00)");
 
   try {
