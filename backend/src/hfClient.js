@@ -6,7 +6,7 @@ const HF_ACCESS_TOKEN = process.env.HF_ACCESS_TOKEN;
 
 if (!HF_ACCESS_TOKEN) {
   console.warn(
-    "⚠️ HF_ACCESS_TOKEN não está definido. A geração via Hugging Face vai falhar."
+    "⚠️ HF_ACCESS_TOKEN not defined. Generation via Hugging Face will fail."
   );
 }
 

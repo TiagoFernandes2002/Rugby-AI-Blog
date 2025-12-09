@@ -14,8 +14,7 @@ backend/dist/
 frontend/dist/
 frontend/.vite/
 
-# ---- Env / keys (IMPORTANTE) ----
-# ignorar apenas .env "normais"
+# ---- Env / keys  ----
 .env
 *.env.local
 backend/.env

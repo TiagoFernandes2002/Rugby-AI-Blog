@@ -1,9 +1,9 @@
 // backend/src/aiClient.js
 const { hf } = require("./hfClient");
 
-const MODEL_ID = "meta-llama/Llama-3.1-8B-Instruct"; // ajusta se precisares
+const MODEL_ID = "meta-llama/Llama-3.1-8B-Instruct"; 
 
-// 1) Artigo de resumo de jornada (dados históricos)
+// 1) Article to summarize a weekly round-up based on historic data
 async function generateRoundupArticle(leagueSummaryText) {
   const systemPrompt = `
 You are an expert rugby journalist writing a weekly round-up article.
@@ -54,7 +54,7 @@ ${leagueSummaryText}
   return { title, content };
 }
 
-// 2) Artigo tipo “vlog/opinião”
+// 2) Article in vlog/blog style on a given topic
 async function generateVlogArticle(topicHint, previousVlogsSummary = "") {
   const systemPrompt = `
 You are a rugby analyst and content creator writing long-form blog/vlog style pieces

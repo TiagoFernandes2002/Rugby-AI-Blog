@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
-// --- Rotas de artigos (igual ao que já tinhas) ---
+// --- Routes for articles ---
 app.get("/articles", (req, res) => {
   res.json(getAll());
 });
@@ -32,13 +32,13 @@ app.get("/articles/:id", (req, res) => {
   res.json(article);
 });
 
-// (opcional) healthcheck
+// (optional) healthcheck
 app.get("/", (req, res) => {
   res.json({ status: "ok", source: "Rugby AI backend" });
 });
 
-// ---------- CRON 1: Terça 20h – resumos de jornada históricos ----------
-// "0 20 * * 2"  → minuto 0, hora 20, dia da semana 2 (terça-feira)
+// ---------- CRON 1: Monday 20:00 – historic weekly round-ups ----------
+// "0 20 * * 1" → Monday at 20:00 "* * * * *" for testing every minute
 cron.schedule("0 20 * * 1", async () => {
   console.log("📰 [CRON] Historic weekly round-ups (Monday 20:00)");
 
@@ -50,7 +50,7 @@ cron.schedule("0 20 * * 1", async () => {
 
       const article = await generateRoundupArticle(summaryText);
 
-      // opcional: prefixar o título com liga/season
+      // Prefix article title with league and season
       article.title = `${leagueName} ${season} – Weekly Round-Up: ${article.title}`;
 
       const saved = addArticle(article);
@@ -63,7 +63,7 @@ cron.schedule("0 20 * * 1", async () => {
   }
 });
 
-// ---------- CRON 2: Quarta 20h – artigo tipo vlog/opinião ----------
+// ---------- CRON 2: Wednesday 20:00 – vlog/opinion style article ----------
 
 const VLOG_TOPICS = [
   "How modern rugby kicking strategies create territorial pressure",
@@ -82,7 +82,7 @@ function pickRandomTopic() {
 
 function getPreviousVlogArticles() {
   const all = getAll();
-  // Só artigos marcados como vlog (os antigos sem type podem ser ignorados)
+  // Only articles marked as vlog (older ones without type can be ignored)
   return all.filter((a) => a.type === "vlog");
 }
 
@@ -91,7 +91,7 @@ function buildPreviousVlogsSummary(max = 10) {
 
   if (!vlogs.length) return "";
 
-  // pega nos mais recentes
+  // take the most recent
   const recent = vlogs.slice(-max);
 
   return recent
@@ -106,7 +106,7 @@ function pickNextVlogTopic() {
   const vlogs = getPreviousVlogArticles();
   const usedTopics = new Set(vlogs.map((v) => v.topic).filter(Boolean));
 
-  // temas ainda não usados
+  // topics not used yet
   const unused = VLOG_TOPICS.filter((t) => !usedTopics.has(t));
 
   if (unused.length > 0) {
@@ -114,13 +114,13 @@ function pickNextVlogTopic() {
     return unused[idx];
   }
 
-  // se já usámos todos, podemos voltar a usar, mas a AI terá o resumo e vai tentar ângulo novo
+  // if all topics have been used, we can reuse, but the AI will have the summary and try a new angle
   const idx = Math.floor(Math.random() * VLOG_TOPICS.length);
   return VLOG_TOPICS[idx];
 }
 
 
-// "0 20 * * 3" → quarta-feira às 20h
+// "0 20 * * 3" → Wednesday at 20:00
 cron.schedule("0 20 * * 3", async () => {
   console.log("🎥 [CRON] Weekly vlog-style article (Wednesday 20:00)");
 
@@ -147,7 +147,7 @@ cron.schedule("0 20 * * 3", async () => {
 });
 
 
-// --------- arrancar servidor ---------
+// --------- start server ---------
 app.listen(PORT, () => {
   console.log(`Backend listening on port ${PORT}`);
 });

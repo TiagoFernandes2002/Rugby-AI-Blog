@@ -5,7 +5,7 @@ require("dotenv").config();
 const API_RUGBY_KEY = process.env.API_RUGBY_KEY;
 
 if (!API_RUGBY_KEY) {
-  console.warn("⚠️ API_RUGBY_KEY não está definido. A API de rugby não vai funcionar.");
+  console.warn("⚠️ API_RUGBY_KEY not defined. Rugby API will not work.");
 }
 
 const api = axios.create({
@@ -15,7 +15,7 @@ const api = axios.create({
   },
 });
 
-// IDs das ligas
+// Leagues we want to cover
 const LEAGUE_INFO = {
   TOP14:            { id: 16, season: 2022 },
   PREMIERSHIP:      { id: 13, season: 2022 },
@@ -27,13 +27,13 @@ const LEAGUE_INFO = {
   CN_HONRA_PORTUGAL: { id: 31, season: 2022 },
 };
 /**
- * Cache em memória: `{ "16-2022": [array de jogos] }`
+ * Cache in memory: `{ "16-2022": [array of games] }`
  */
 const gamesCache = {};
 
 /**
- * Vai buscar TODOS os jogos de uma liga+season.
- * Não usamos "date" aqui por causa da limitação do plano grátis.
+ * will fetch ALL games for a league season (no date filtering)
+ * We don't use "date" here because of the limitations of the free plan.
  */
 async function fetchAllGamesForLeagueSeason(leagueId, season) {
   const cacheKey = `${leagueId}-${season}`;
@@ -43,7 +43,7 @@ async function fetchAllGamesForLeagueSeason(leagueId, season) {
     params: {
       league: leagueId,
       season,
-      // NÃO colocar date/from/to aqui
+      // DO NOT include date/from/to here
     },
   });
 
@@ -53,7 +53,7 @@ async function fetchAllGamesForLeagueSeason(leagueId, season) {
 }
 
 /**
- * Standings da época (será, na prática, a classificação final).
+ * Standings for the season (likely the final table).
  */
 async function fetchStandingsForLeagueSeason(leagueId, season) {
   const res = await api.get("/standings", {
@@ -64,10 +64,9 @@ async function fetchStandingsForLeagueSeason(leagueId, season) {
 }
 
 /**
- * Calcula uma "janela histórica" baseado no dia/mês atual,
- * mas num targetYear (ex.: 2022).
+ * Calculates the date window for the "historic week"
  *
- * Ex: hoje 2025-12-09 → from 2022-12-02, to 2022-12-09
+ * Ex: today 2025-12-09 → from 2022-12-02, to 2022-12-09
  */
 function getHistoricalWindow(targetYear = 2022, daysBack = 7) {
   const now = new Date();
@@ -80,7 +79,7 @@ function getHistoricalWindow(targetYear = 2022, daysBack = 7) {
 }
 
 /**
- * Filtra jogos desta "semana histórica" dentro do array completo da season.
+ * Filters games for the "historic week" within the full season array.
  */
 function filterGamesForHistoricalWeek(allGames, targetYear = 2022, daysBack = 7) {
   const { from, to } = getHistoricalWindow(targetYear, daysBack);
@@ -89,18 +88,18 @@ function filterGamesForHistoricalWeek(allGames, targetYear = 2022, daysBack = 7)
     const dateStr = g.date || g.game?.date;
     if (!dateStr) return false;
 
-    const d = new Date(dateStr); // isto já vem com ano 2022/2019/etc.
+    const d = new Date(dateStr); // this already comes with year 2022/2019/etc.
 
     return d >= from && d <= to;
   });
 }
 
 /**
- * Resumo de UMA liga usando dados históricos:
- * - vai buscar season inteira
- * - filtra jogos desta "semana histórica"
- * - junta standings finais
- * Se não houver jogos na janela → devolve null (liga ignorada essa semana).
+ * Summary for ONE league using historical data:
+ * - fetches the entire season
+ * - filters games for the "historic week"
+ * - includes final standings
+ * If no games in the window → returns null (league ignored that week).
  */
 async function buildWeeklySummaryForLeagueHistorical(leagueKey, targetYear = 2022) {
   const info = LEAGUE_INFO[leagueKey];
@@ -116,12 +115,12 @@ async function buildWeeklySummaryForLeagueHistorical(leagueKey, targetYear = 202
 
   if (!games.length) {
     console.log(
-      `ℹ️ Nenhum jogo na semana histórica para ${leagueKey} (season ${season}), liga ignorada.`
+      `ℹ️ No games in the historic week for ${leagueKey} (season ${season}), league ignored.`
     );
     return null;
   }
 
-  // 3) standings (provavelmente finais)
+  // 3) standings (likely final)
   const standings = await fetchStandingsForLeagueSeason(leagueId, season);
   const leagueName = games[0]?.league?.name || leagueKey;
 
@@ -184,7 +183,7 @@ async function buildWeeklySummaryForLeagueHistorical(leagueKey, targetYear = 202
 }
 
 /**
- * Gera summaries para TODAS as ligas configuradas, ignorando as que não tenham jogos nessa janela.
+ * Generates weekly summaries for ALL leagues using historical data.
  */
 async function buildWeeklySummariesForAllLeaguesHistorical(targetYear = 2022) {
   const summaries = [];
@@ -198,7 +197,7 @@ async function buildWeeklySummariesForAllLeaguesHistorical(targetYear = 2022) {
       if (summary) summaries.push(summary);
     } catch (err) {
       console.error(
-        `Erro ao construir resumo semanal histórico para ${leagueKey}:`,
+        `Error building historic weekly summary for ${leagueKey}:`,
         err.response?.data || err.message || err
       );
     }
