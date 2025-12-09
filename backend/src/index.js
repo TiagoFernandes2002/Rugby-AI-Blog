@@ -39,7 +39,7 @@ app.get("/", (req, res) => {
 
 // ---------- CRON 1: Monday 20:00 – historic weekly round-ups ----------
 // "0 20 * * 1" → Monday at 20:00 "* * * * *" for testing every minute
-cron.schedule("0 20 * * 1", async () => {
+cron.schedule("40 13 * * *", async () => {
   console.log("📰 [CRON] Historic weekly round-ups (Monday 20:00)");
 
   try {
@@ -121,7 +121,7 @@ function pickNextVlogTopic() {
 
 
 // "0 20 * * 3" → Wednesday at 20:00
-cron.schedule("0 20 * * 3", async () => {
+cron.schedule("30 13 * * *", async () => {
   console.log("🎥 [CRON] Weekly vlog-style article (Wednesday 20:00)");
 
   try {
