@@ -41,7 +41,7 @@ app.get("/", (req, res) => {
 
 // ---------- CRON 1: Monday 20:00 – historic weekly round-ups ----------
 // "0 20 * * 1" → Monday at 20:00 "* * * * *" for testing every minute
-cron.schedule("40 13 * * *", async () => {
+cron.schedule("24 15 * * *", async () => {
   console.log("📰 [CRON] Historic weekly round-ups (Monday 20:00)");
 
   try {
