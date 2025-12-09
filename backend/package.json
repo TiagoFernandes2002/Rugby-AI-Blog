@@ -10,7 +10,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@huggingface/inference": "^4.13.5",
+    "axios": "^1.13.2",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "node-cron": "^4.2.1"
   }
