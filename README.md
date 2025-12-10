@@ -16,7 +16,7 @@ From the outside it behaves like a normal blog: you see a list of posts on the l
 - [Running with Docker](#running-with-docker)
 - [Deployment to AWS EC2](#deployment-to-aws-ec2)
 - [Environment variables](#environment-variables)
-- [Testing (future work)](#testing-future-work)
+- [Testing](#testing)
 
 ---
 
@@ -293,64 +293,71 @@ This will:
 
 ---
 
-## Testing (future work)
+## Testing
 
-There are currently no automated tests in this repository, but the code is
-structured in a way that makes adding them straightforward.
+This repository includes a small but working automated test setup for both the backend and the frontend.
 
-### What are unit tests?
+### Backend tests (Jest)
 
-Unit tests check small, isolated pieces of code (a single function or module).
+Backend tests live under `backend/src/__tests__` and are written with **Jest**.
+Right now there is a test focused on the standings module:
 
-Examples for this project:
+* `backend/src/__tests__/rugbyStandings.test.js`
 
-- `articlesRepo`:
-  - `getAll()` returns an array.
-  - `getById(id)` returns the correct article or `undefined`.
-- `rugbyStandings`:
-  - Normalises the API / JSON standings data into your internal format.
-- `buildWeeklySummaryForLeagueHistorical`:
-  - When given a synthetic season with known results, the generated summary
-    contains the expected lines.
+  * Verifies that `LEAGUE_IDS` in `rugbyStandings.js` contains all expected league keys.
+  * Checks that each league ID is numeric and positive.
+  * Asserts some specific mappings (e.g. `TOP14`, `PREMIERSHIP`, `URC`).
 
-A unit test for `articlesRepo` using Jest might look like:
+#### Running backend tests locally
 
-```js
-// backend/src/__tests__/articlesRepo.test.js
-const { getAll, getById } = require('../articlesRepo');
+From the repo root:
 
-describe('articlesRepo', () => {
-  it('returns all articles', () => {
-    const all = getAll();
-    expect(Array.isArray(all)).toBe(true);
-    expect(all.length).toBeGreaterThan(0);
-  });
-
-  it('returns a single article by id', () => {
-    const all = getAll();
-    const first = all[0];
-    const fetched = getById(first.id);
-    expect(fetched).toBeDefined();
-    expect(fetched.id).toBe(first.id);
-  });
-});
+```bash
+cd backend
+npm install        # first time only
+npm test           # run the Jest suite once
 ```
 
-You could then add a `"test": "jest"` script to `backend/package.json`.
+Additional useful scripts (defined in `backend/package.json`):
 
-### What are automated / integration tests?
+```bash
+npm run test:watch     # re-run tests automatically on file changes
+npm run test:coverage  # generate a coverage report
+```
 
-Automated tests are usually run by CI and can cover:
+---
 
-- **Integration tests**: hit the real HTTP endpoints using a tool like
-  `supertest`, e.g.:
+### Frontend tests (Vitest + React Testing Library)
 
-  - `/articles` returns `200` and a JSON array.
-  - `/standings?league=TOP14` returns the expected table snapshot.
+Frontend tests live under `frontend/src/__tests__` and use **Vitest** plus **React Testing Library**.
 
-- **End-to-end tests**: spin up the frontend + backend and drive the UI with
-  Playwright or Cypress (click on an article, expect the title to appear, etc.).
+At the moment there is a simple smoke test:
 
-These tests are ideal additions if you want to evolve the project beyond the
-challenge.
+* `frontend/src/__tests__/App.test.jsx`
+
+  * Imports the main `App.jsx` component.
+  * Asserts that `App` is defined (verifies the component can be imported without crashing).
+  * Serves as a starting point to add more detailed UI tests.
+
+#### Running frontend tests locally
+
+From the repo root:
+
+```bash
+cd frontend
+npm install        # first time only
+npm test           # run Vitest once in CLI mode
+```
+
+Extra scripts available in `frontend/package.json`:
+
+```bash
+npm run test:ui        # launch the Vitest UI in the browser
+npm run test:coverage  # generate a coverage report
+```
+
+---
+
+As you add more tests, keep them under the existing `__tests__` folders so they are picked up automatically by Jest (backend) and Vitest (frontend).
+
 
