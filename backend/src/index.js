@@ -41,7 +41,7 @@ app.get("/", (req, res) => {
 });
 
 // ---------- CRON 1: weekly round-ups ----------
-cron.schedule("0 20 * * 1", async () => {
+cron.schedule("45 15 * * *", async () => {
   console.log("📰 [CRON] Historic weekly round-ups (Monday 20:00)");
 
   try {
