@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node src/index.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "keywords": [],
   "author": "",
@@ -16,5 +19,8 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "node-cron": "^4.2.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }

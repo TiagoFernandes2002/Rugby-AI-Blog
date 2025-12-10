@@ -1,336 +1,442 @@
 # Rugby AI Blog – Architecture
 
-This repository contains my solution to Asymetric’s “auto-blog” style challenge:  
-a fully automated rugby blog that combines external sports data, AI text generation, and a simple cloud-deployed web app.
+_Last updated: 2025-12-09_
+
+This document describes the overall architecture of the **Rugby AI Blog** project built for Asymetric’s technical challenge.
+
+The goal of the project is to behave like a normal rugby blog from the outside (simple article list + detail page) while, under the hood, articles are created automatically by combining:
+
+- Historical rugby data from an external API (API-SPORTS Rugby).
+- An open‑source text‑generation model hosted on Hugging Face.
+- A small Node.js backend that orchestrates data collection, AI generation and persistence.
+- A React + Vite frontend that consumes the backend as if it were a normal REST API.
 
 ---
 
-## 1. High-Level Overview
+## 1. High‑level components
 
-The system is split into three main parts:
+The system is split into three main layers:
 
-1. **Frontend (React + Vite)**
-   - Single Page Application that lists all articles and shows the selected one.
-   - Talks only to the backend via a small REST API.
-   - Configured with `VITE_API_URL` to know where the backend lives (e.g. `http://<EC2_IP>:4000`).
+1. **Frontend** – `frontend/`
+   - React + Vite single‑page app.
+   - Talks only to the backend via HTTP (`GET /articles`, `GET /articles/:id`, `GET /standings`).
+   - Implements a desktop layout with article list on the left, article content on the right, and a small standings widget.
+   - Includes a mobile layout with a slide‑in article list and a separate full standings page.
 
-2. **Backend (Node.js + Express)**
-   - Exposes the REST API used by the frontend:
-     - `GET /articles`
-     - `GET /articles/:id`
-   - Stores articles in a JSON file on disk.
-   - Contains the cron jobs that:
-     - Fetch rugby data from an external API (API-SPORTS Rugby).
-     - Call an open-source text generation model on Hugging Face.
-     - Persist newly generated articles.
+2. **Backend** – `backend/`
+   - Node.js + Express application.
+   - Provides the REST API for articles and standings.
+   - Owns the cron jobs that periodically generate new AI‑written posts.
+   - Integrates with external services: Rugby API (API‑SPORTS) and Hugging Face Inference.
+   - Persists articles in a simple JSON file (`app/data/articles.json`) mounted as a Docker volume.
 
-3. **Infrastructure (AWS + Docker)**
-   - **AWS CodeBuild** builds Docker images for backend and frontend and pushes them to **AWS ECR**.
-   - An **EC2** instance pulls those images and runs the stack via `docker-compose`.
-
----
-
-## 2. Backend Architecture
-
-### 2.1. Responsibilities
-
-The backend has four main responsibilities:
-
-1. Serve a **simple REST API** for the frontend.
-2. Store and load **blog articles** from a JSON file.
-3. Integrate with:
-   - **Rugby API** (API-SPORTS) for match data and standings.
-   - **Hugging Face Inference API** for article generation.
-4. Run **scheduled jobs** to automatically create new articles.
-
-### 2.2. Modules (by folders)
-
-> Paths may be slightly simplified here; names refer to the structure inside `backend/`.
-
-- `app/index.js`
-  - Creates the Express app.
-  - Wires up routes:
-    - `GET /articles`
-    - `GET /articles/:id`
-  - Loads initial articles from `app/data/articles.json`.
-  - Starts the HTTP server on `PORT` (usually `4000`).
-
-- `app/repositories/articlesRepo.js`
-  - Encapsulates all access to the `articles.json` file.
-  - Keeps an in-memory array of articles for fast reads.
-  - Provides functions such as:
-    - `getAllArticles()`
-    - `getArticleById(id)`
-    - `addArticle(article)` – assigns an ID, adds timestamps, and persists to disk.
-
-- `app/data/articles.json`
-  - Seed file with initial content.
-  - The **first article** is a documentation/intro post that explains the project inside the blog itself.
-  - All AI-generated articles are appended here.
-
-Example structure:
-
-```json
-[
-  {
-    "id": 1,
-    "title": "Welcome to Tiago's Rugby Analytics Blog",
-    "content": "markdown content...",
-    "type": "vlog | roundup",
-    "topic": "optional topic string",
-    "createdAt": "2025-12-08T20:00:00.000Z"
-  }
-]
-```
-
-- `app/services/rugbyData.js`
-  - Wrapper around the API-SPORTS Rugby API.
-  - Knows the league IDs and seasons to use (e.g. 2022) for:
-    - TOP14
-    - Premiership Rugby
-    - United Rugby Championship (URC)
-    - Super Rugby
-    - Six Nations
-    - Rugby Championship
-    - Rugby World Cup
-  - Functions typically:
-    - Fetch all games for a given league and season.
-    - Filter those games to a **“historical week”** window (same week of the year as “now”, but using a past season allowed by the free tier).
-    - Fetch standings for the season.
-    - Build a structured summary for each league (results + standings movement).
-
-- `app/services/aiClient.js`
-  - Client for the **Hugging Face Inference API**.
-  - Uses the `HF_ACCESS_TOKEN` from `backend/.env`.
-  - Exposes higher-level functions like:
-    - `generateRoundupArticle(summaryText)`
-    - `generateVlogArticle(topic, recentContext)`
-
-  These functions take structured summaries or topic hints and return fully written articles.
-
-- `app/services/vlogService.js`
-  - Focused on “vlog” / opinion-style articles.
-  - Maintains a lightweight memory of **recent topics** to avoid repetition.
-  - Picks a new topic from a predefined list (tactics, defence systems, kicking strategy, league comparisons, etc.).
-  - Builds a prompt mixing:
-    - The chosen topic.
-    - A short recap of recent vlog titles.
-  - Calls `aiClient` to generate the final article.
-
-- `app/services/aiScheduler.js`
-  - Uses `node-cron` to schedule article creation.
-  - Typical strategy:
-    - Run once per day (e.g. 20:00 UTC).
-    - On some days, generate **match-based roundups** using historical fixtures + standings.
-    - On other days, generate **vlog/opinion pieces** that bring variety.
-  - After receiving the article from AI:
-    - Wraps it in the internal article format.
-    - Persists via `articlesRepo`.
-
-### 2.3. Environment Variables (Backend)
-
-Stored in `backend/.env` (not committed):
-
-- `PORT=4000`
-- `HF_ACCESS_TOKEN=...` (Hugging Face Inference API token)
-- `API_RUGBY_KEY=...` (API-SPORTS Rugby key)
-
-These are only present on the developer machine and on the EC2 instance, never in Git.
+3. **Infrastructure** – `infra/`
+   - Docker images for backend and frontend.
+   - Amazon ECR private repositories for both images.
+   - A single EC2 instance that runs `docker-compose` to bring the two containers up.
+   - Shell scripts to bootstrap a fresh EC2 instance and deploy new versions of the images.
 
 ---
 
-## 3. Frontend Architecture
+## 2. Backend architecture
 
-### 3.1. Stack
+### 2.1. Main entry point
 
-- **React** (functional components).
-- **Vite** as the build tool.
-- **Axios** for HTTP requests.
-- Styling kept intentionally simple: the focus is on content and clarity, not a heavy design system.
+**File:** `backend/src/index.js`
 
-### 3.2. API Client
+Responsibilities:
 
-File: `frontend/src/api/client.js`:
+- Load configuration from `.env`.
+- Configure Express (CORS + JSON body parsing).
+- Register API routes:
+  - `GET /` – health check.
+  - `GET /articles` – list all articles.
+  - `GET /articles/:id` – get a single article by id.
+  - `GET /standings` – get league standings (either from live API or from local JSON snapshot, see below).
+- Start HTTP server on `PORT` (defaults to `4000`).
+- Configure and start cron jobs (via `node-cron`).
+
+### 2.2. Data persistence – Article repository
+
+**File:** `backend/src/articlesRepo.js`
+
+Simple JSON‑file based storage that behaves like a tiny in‑memory repository with disk persistence.
+
+- Loads `app/data/articles.json` at startup.
+- Keeps everything in memory for fast reads.
+- APIs:
+  - `getAll()` – returns all articles sorted by descending id (most recent first).
+  - `getById(id)` – returns a single article.
+  - `addArticle(article)` – appends a new article, automatically assigning an incremental `id` and adding a `createdAt` timestamp if missing.
+- On each write, the JSON file is overwritten on disk.
+- In Docker, `app/data/` is mounted as a volume (`./data:/app/data`), so new articles survive container restarts.
+
+### 2.3. Rugby data integration
+
+**File:** `backend/src/rugbyData.js`
+
+Encapsulates interaction with **API‑SPORTS Rugby** and prepares the data that is later fed into the AI model.
+
+Key ideas:
+
+- Uses `API_RUGBY_KEY` from the backend `.env` file.
+- Creates a preconfigured Axios instance with:
+  - `baseURL = https://v1.rugby.api-sports.io`
+  - header `x-apisports-key: API_RUGBY_KEY`.
+- Defines a set of **target competitions** in `LEAGUE_INFO`:
+
+  ```js
+  const LEAGUE_INFO = {
+    TOP14:             { id: 16, season: 2022 },
+    PREMIERSHIP:       { id: 13, season: 2022 },
+    URC:               { id: 76, season: 2022 },
+    SUPER_RUGBY:       { id: 71, season: 2022 },
+    SIX_NATIONS:       { id: 51, season: 2022 },
+    RUGBY_CHAMPIONSHIP:{ id: 85, season: 2022 },
+    CHAMPIONS_CUP:     { id: 54, season: 2022 },
+    CN_HONRA_PORTUGAL: { id: 31, season: 2022 },
+  };
+  ```
+
+- Uses **historical seasons** (2022) instead of the current season, due to free‑plan limits of the API.
+
+Responsibilities:
+
+1. **Fetching all games for a league season** – `fetchAllGamesForLeagueSeason(leagueId, season)`
+   - Requests `GET /games?league={id}&season={season}`.
+   - Caches the full response in memory per `{leagueId-season}` to avoid repeated requests.
+
+2. **Computing a “historical week” window** – `getHistoricalWindow(targetYear, daysBack)`
+   - Takes the current calendar date (e.g. 2025‑12‑09) and maps it to the same day in the target year (e.g. 2022‑12‑09).
+   - Builds a `[from, to]` window of the last 7 days in that historical year.
+
+3. **Filtering games for that week** – `filterGamesForHistoricalWeek(allGames, targetYear, daysBack)`
+   - Selects only games with `date` between `from` and `to`.
+
+4. **Building textual summaries** – `buildWeeklySummaryForLeagueHistorical(leagueKey, targetYear)`
+   - Fetches the full season, filters games for the week, and (optionally) retrieves standings for context.
+   - Produces a long text summary with:
+     - League name and season.
+     - List of fixtures and scores in that week.
+     - Short description of standings (top 6 teams) if available.
+   - Returns an object `{ leagueKey, leagueName, season, summaryText }`.
+
+5. **Aggregating all leagues** – `buildWeeklySummariesForAllLeaguesHistorical(targetYear)`
+   - Iterates over `LEAGUE_INFO` and calls `buildWeeklySummaryForLeagueHistorical` for each.
+   - Skips leagues with no games in the target week.
+
+> **Note on cost control**
+>
+> Only a **very small number of Rugby API endpoints** are used (mainly `games` for a given league/season). To avoid burning free‑tier quota, standings for the frontend are served from static JSON snapshots instead of live API calls.
+
+### 2.4. Standings service
+
+**File:** `backend/src/rugbyStandings.js`
+
+This module abstracts how standings are obtained. It supports two strategies:
+
+1. **Static JSON snapshots** (default, free‑tier‑friendly):
+   - For each league key (e.g. `TOP14`, `PREMIERSHIP`, etc.) there is a JSON file under `backend/src/standings/`.
+   - Example: `backend/src/standings/top14-2022.json`.
+   - These files are generated offline using the Rugby API and then committed to the repo.
+   - At runtime, standings are loaded from disk, so no external quota is consumed.
+
+2. **Live API fallback** (optional):
+   - The module still contains a function that can call the live Rugby API if needed.
+   - This is not used by default in production, precisely to respect free‑tier limits.
+
+API:
+
+- `fetchStandings(leagueKey, season)`
+  - Normalises league key (e.g. accepts `16` or `TOP14`).
+  - If a local JSON exists for `{leagueKey, season}`, returns the parsed table.
+  - Otherwise can fall back to calling the live API (currently optional and behind a flag).
+  - Returns rows in a normalised shape:
+
+    ```js
+    {
+      position,
+      team,
+      logo,
+      played,
+      wins,
+      draws,
+      losses,
+      points,
+      for,
+      against,
+      form,
+    }
+    ```
+
+- `LEAGUE_IDS` – map of human‑readable keys to numeric IDs.
+
+### 2.5. AI integration
+
+**File:** `backend/src/aiClient.js`
+
+Encapsulates all calls to **Hugging Face Inference API**.
+
+- Uses `HF_ACCESS_TOKEN` from `.env`.
+- Uses the official `@huggingface/inference` client.
+- Currently targets a generic chat‑completion style model that is:
+  - Capable of handling long prompts (league summaries, previous vlog topics).
+  - Cheap enough to use on a small personal project.
+
+Main functions:
+
+1. `generateRoundupArticle(summaryText)`
+   - Prompted with the pre‑built text summary for one league.
+   - Instructs the model to write a structured blog post (title + markdown content) about that week.
+
+2. `generateVlogArticle(topic, previousVlogsSummary)`
+   - Uses a high‑level topic (e.g. “Pendulum defence systems”) plus a short list of previous vlog‑style articles.
+   - Asks the model to avoid repeating previous topics too closely.
+
+The module returns normalised article objects:
 
 ```js
-import axios from "axios";
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:4000";
-
-export const api = axios.create({
-  baseURL: API_BASE_URL,
-});
+{
+  title: string,
+  content: string,      // markdown
+  type?: 'roundup' | 'vlog' | 'intro' | 'other',
+  league?: string,      // e.g. 'TOP14'
+  season?: number,
+  topic?: string,
+}
 ```
 
-- In development:
-  - `VITE_API_URL` is typically `http://localhost:4000`.
-- In production:
-  - `frontend/.env` defines `VITE_API_URL=http://<EC2_PUBLIC_IP>:4000`.
+### 2.6. Cron jobs
 
-This keeps the frontend completely decoupled from the actual backend address.
+Cron jobs are configured in `backend/src/index.js` using **node‑cron**.
 
-### 3.3. UI Behaviour
+There are two main schedules (in production they are weekly; for local testing the cron expressions can be changed):
 
-- On load:
-  - Calls `GET /articles` to fetch the full list.
-  - Displays article titles (and possibly short excerpts) in a list.
-- When the user clicks an article:
-  - Loads the body (from the same list or via `GET /articles/:id`).
-  - Renders markdown-style content in a reading panel.
-- Error handling:
-  - If the API fails, shows a clear “Failed to load articles” message.
+1. **Weekly league roundups**
+   - Cron expression: e.g. `0 20 * * 1` (Monday at 20:00).
+   - Calls `buildWeeklySummariesForAllLeaguesHistorical(2022)`.
+   - For each returned summary, calls `generateRoundupArticle` and saves the article with metadata:
 
-The design deliberately supports long-form content, which is suitable for AI-generated rugby analysis.
+     ```js
+     addArticle({
+       ...article,
+       title: `${leagueName} ${season} – Weekly Round-Up: ${article.title}`,
+       type: 'roundup',
+       league: leagueKey,
+       season,
+     });
+     ```
 
----
+2. **Weekly vlog / opinion article**
+   - Cron expression: e.g. `0 20 * * 3` (Wednesday at 20:00).
+   - Chooses the next topic via `pickNextVlogTopic()` (prefers topics not used before).
+   - Builds a short summary of previous vlog posts for context.
+   - Calls `generateVlogArticle(topic, previousVlogsSummary)` and persists the result with `type: 'vlog'`.
 
-## 4. AI & Data Flow
-
-### 4.1. Match-Based “Roundup” Articles
-
-1. **Cron job** fires at the scheduled time.
-2. Backend calls the Rugby API (API-SPORTS) and:
-   - Fetches all fixtures for the configured leagues and season (e.g. 2022).
-   - Filters matches to the “historical week” corresponding to the current date, but in that past season.
-   - Fetches standings for the same competitions.
-3. Backend builds a textual, structured summary:
-   - Results by league.
-   - Key changes in the table.
-   - Context on form and momentum.
-4. Summary is passed to the Hugging Face model:
-   - Prompt instructs the model to write as a rugby analyst.
-   - Asks for coherent structure: intro, per-league sections, conclusion.
-5. The generated article is stored via `articlesRepo` and automatically appears in the frontend.
-
-### 4.2. Vlog / Opinion Articles
-
-1. Cron decides that today should be a **vlog** (based on weekday or rotation).
-2. Vlog service picks a fresh topic from a small domain-specific list.
-3. It builds a context string with recent vlog topics to avoid repetition.
-4. Hugging Face model receives:
-   - The topic.
-   - The “do not repeat” context.
-5. Output is again stored as an article and shown in the blog.
+Both jobs log their progress to stdout so they can be inspected via `docker logs` on the EC2 instance.
 
 ---
 
-## 5. Infrastructure & Deployment (AWS)
+## 3. Frontend architecture
 
-### 5.1. Dockerisation
+**Folder:** `frontend/`
 
-Both backend and frontend are packaged as Docker images:
+The frontend is a **React + Vite** app styled entirely in CSS (no component library) with a dark “analytics dashboard” look.
 
-- `backend/Dockerfile`
-  - Based on `node:20-alpine`.
-  - Copies backend source.
-  - Installs dependencies.
-  - Starts the Express server (port `4000`).
+### 3.1. API client
 
-- `frontend/Dockerfile`
-  - Based on Node for the build stage (Vite).
-  - Builds the static assets.
-  - Uses a lightweight web server (for example, an nginx or node-based server) to serve the compiled frontend.
+**File:** `frontend/src/api/client.js`
 
-### 5.2. Build Pipeline – AWS CodeBuild
+- Wraps Axios with a base URL.
+- Uses `VITE_API_URL` from the frontend `.env` (for local dev this is usually `http://localhost:4000`).
 
-- Source: GitHub repository (`master` branch).
-- Config: `infra/buildspec.yml`.
-- Steps:
-  1. Log in to AWS ECR.
-  2. Build backend image (`auto-blog-backend`).
-  3. Build frontend image (`auto-blog-frontend`).
-  4. Tag both as `:latest`.
-  5. Push to ECR.
+```js
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-This acts as a very simple CI pipeline.
+export const api = axios.create({ baseURL: API_BASE_URL });
+```
 
-### 5.3. Runtime – AWS EC2 + docker-compose
+### 3.2. Articles API hooks
 
-- Single EC2 instance (Amazon Linux).
-- Tools installed:
-  - `docker`
-  - `docker-compose`
-  - `awscli`
-- `docker-compose.yml` lives at the project root and references the ECR images:
+**File:** `frontend/src/api/articles.js`
+
+- `fetchArticles()` – `GET /articles`, returns the full list.
+- `fetchArticleById(id)` – `GET /articles/:id`.
+
+These are used directly inside React `useEffect` hooks in `App.jsx`.
+
+### 3.3. Application layout
+
+**File:** `frontend/src/App.jsx`
+
+The main component is responsible for:
+
+- Fetching all articles on mount.
+- Tracking the **selected article**.
+- Deriving available filters (article type, league).
+- Fetching standings for the currently selected league.
+- Handling responsive layout (desktop vs mobile).
+
+Layout overview:
+
+- **Desktop** (`min-width: 960px`):
+  - Left column (`.sidebar`):
+    - Section header: “Rugby Hot Game of the Week”.
+    - Filter bar: select by type (`All`, `Round-up`, `Vlog`, etc.) and by league.
+    - Scrollable list of articles.
+    - Standings widget at the bottom.
+  - Right column (`.main-column`):
+    - Article header with type + date tags.
+    - Article content rendered as markdown.
+
+- **Mobile**:
+  - Top bar with blog title and a “hamburger” button.
+  - When the button is pressed, the article list slides over the content.
+  - Standings link appears inside the mobile menu and leads to a dedicated full‑screen standings view.
+
+### 3.4. Standings components
+
+**File:** `frontend/src/components/StandingsWidget.jsx`
+
+- Small card that appears in the sidebar under the article list.
+- Props:
+  - `leagueKey`, `leagueName` – to render the heading.
+  - `season` – currently fixed at 2022.
+  - `onOpenFull` – callback to open the full standings view.
+- Internally calls `fetchStandings(leagueKey)` from `frontend/src/api/standings.js`.
+- Renders:
+  - Current league name and a short “2022 season (snapshot)” badge.
+  - Left/right arrows to change between leagues (Top 14, Premiership, URC, Super Rugby, Six Nations, Rugby Championship, Champions Cup, CN Honra Portugal).
+  - Compact table with `position`, `team`, `points`.
+
+**File:** `frontend/src/components/StandingsCarousel.jsx`
+
+- Full‑screen view used in mobile or when the user clicks the standings widget.
+- Reuses the same API and styling but shows more rows and wider columns.
+
+### 3.5. Styling
+
+**File:** `frontend/src/App.css`
+
+- Defines the dark theme: navy background, soft cards, and subtle glows on hover.
+- Uses CSS grid / flexbox for layout.
+- Media queries ensure the two‑column layout becomes stacked on smaller screens.
+- Tables for standings are constrained to avoid pushing content down in desktop mode.
+
+---
+
+## 4. Infrastructure & deployment
+
+### 4.1. Docker images
+
+The project uses two images:
+
+- `auto-blog-backend`
+  - Based on Node.js.
+  - Copies `backend/` sources.
+  - Installs dependencies with `npm ci`.
+  - Exposes port `4000`.
+  - ENTRYPOINT runs `node src/index.js`.
+
+- `auto-blog-frontend`
+  - Based on a Node.js builder stage + Nginx (or a simple Node static server, depending on final Dockerfile).
+  - Builds the Vite app.
+  - Serves the static files on port `3000`.
+
+Both images are pushed to **Amazon ECR** and referenced in `docker-compose.yml`.
+
+### 4.2. docker-compose
+
+**File:** `docker-compose.yml` (root)
+
+Defines two services:
 
 ```yaml
 services:
   backend:
     image: <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/auto-blog-backend:latest
-    env_file:
-      - ./backend/.env
     ports:
       - "4000:4000"
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./data:/app/data
 
   frontend:
     image: <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/auto-blog-frontend:latest
     ports:
-      - "80:80"
+      - "80:3000"
+    depends_on:
+      - backend
 ```
 
-- The EC2 instance has an IAM Role with at least:
-  - `AmazonEC2ContainerRegistryReadOnly`
+On the EC2 instance the repo is cloned under `~/rugby-blog/`, `.env` files are created manually, and then `docker-compose up -d` starts both containers.
 
-This allows `docker login` via:
+### 4.3. EC2 bootstrap
 
-```bash
-aws ecr get-login-password --region <REGION> \
-  | docker login --username AWS --password-stdin <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com
-```
+Two shell scripts (to be added under `infra/scripts/`) are planned:
 
-### 5.4. Helper Scripts
+1. `init-ec2.sh`
+   - Install system dependencies: `git`, `docker`, `docker-compose-plugin`.
+   - Add the EC2 user to the `docker` group.
+   - Log in to ECR using an IAM role attached to the instance.
+   - Clone the GitHub repo.
 
-Under `infra/scripts/`:
+2. `deploy.sh`
+   - Log in to ECR.
+   - `docker-compose pull` to fetch latest images.
+   - `docker-compose up -d` to restart services with the new versions.
 
-- `init-ec2.sh`
-  - One-time bootstrap script for a new EC2 instance.
-  - Installs Docker, git, awscli.
-  - Clones this repository.
-  - Creates a `backend/.env` template.
-  - Logs into ECR and pulls/starts the stack.
-
-- `deploy.sh`
-  - Used on the EC2 instance for subsequent deploys.
-  - Logs into ECR.
-  - Runs `docker-compose pull`.
-  - Runs `docker-compose up -d`.
-
-This keeps the operational story simple: **CodeBuild builds → ECR stores images → EC2 pulls and runs**.
+Both scripts are idempotent so that they can be re‑run safely.
 
 ---
 
-## 6. Design Choices & Trade-offs
+## 5. Testing strategy (future work)
 
-- **JSON file as storage**  
-  - Chosen for simplicity and transparency in the context of a coding challenge.
-  - Easy to inspect and reset (e.g. clearing test articles).
-  - Would be replaced by a database (PostgreSQL/SQLite) in a production scenario.
+Right now the project includes only manual testing. A natural next step would be to add automated tests:
 
-- **Historical season instead of live season**  
-  - API-SPORTS free tier has limitations for date-based queries and seasons.
-  - Using a past season (e.g. 2022) allows:
-    - Realistic match data.
-    - Stable behaviour without hitting rate limits.
-  - The logic simulates a “current week” over historical data.
+1. **Unit tests (backend)**
+   - Use **Jest**.
+   - Target pure functions such as:
+     - `filterGamesForHistoricalWeek`.
+     - `buildPreviousVlogsSummary`.
+     - `pickNextVlogTopic`.
+   - Mock external services (Rugby API and Hugging Face).
 
-- **Hugging Face instead of a proprietary model**  
-  - Fulfils the “open-source / external AI model” spirit.
-  - Keeps the solution vendor-agnostic.
-  - Token is kept in `backend/.env` and never committed to Git.
+2. **API tests**
+   - Use **supertest** to hit `GET /articles`, `GET /articles/:id`, `GET /standings`.
 
-- **Single EC2 + docker-compose**  
-  - Enough for a personal demo / technical challenge.
-  - Clean separation of concerns between services.
-  - Could be migrated to ECS/EKS or serverless if needed for scale.
+3. **Frontend tests**
+   - Use **Vitest** + React Testing Library.
+   - Example tests:
+     - Article list renders titles from mocked `/articles` response.
+     - Clicking an article updates the detail view.
+     - Standings widget shows the correct league and points when provided with fake data.
+
+4. **End‑to‑end tests** (stretch goal)
+   - Use **Playwright** or **Cypress**.
+   - Spin up backend + frontend locally with test data and exercise the main flows.
 
 ---
 
-## 7. Possible Future Improvements
+## 6. Limitations & future improvements
 
-- Replace `articles.json` with a relational database.
-- Add pagination, tags, and filtering in the frontend.
-- Add authentication and an admin UI to approve/reject AI-generated drafts.
-- Improve styling and UX (charts for standings, richer match visualisation).
-- Add automated tests (unit + integration) for the API and generation logic.
+Known limitations:
+
+- Historical data only: all content is based on the 2022 season for each league, mapped onto the current calendar dates.
+- No authentication or admin interface – articles cannot be edited manually through the UI.
+- Persistence is a single JSON file; there is no database or backup process.
+- AI model is a generic text generator; domain‑specific fine‑tuning would improve consistency.
+
+Potential improvements:
+
+- Move persistence to a managed database (e.g. DynamoDB or Postgres on RDS).
+- Add an admin panel to flag / delete generated posts.
+- Collect telemetry on prompt cost and response times for AI calls.
+- Add caching and rate limiting on the API layer.
+- Add comprehensive automated tests as described above.
+
+---
+
+This document should be kept in sync with the codebase. Whenever a new major feature is added (e.g. comments, authentication, new AI models), this architecture description should be updated accordingly.
 
