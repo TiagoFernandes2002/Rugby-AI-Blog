@@ -51,7 +51,7 @@ export function ArticleList({ articles, selectedId, onSelect }) {
                 }`}>{article.type}</span>
               )}
 
-              {article.league && (
+              {article.league && article.league.toLowerCase() !== "other" && (
                 <span className="tag tag-league">{article.league}</span>
               )}
             </div>

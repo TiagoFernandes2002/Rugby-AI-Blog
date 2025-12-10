@@ -44,7 +44,8 @@ function formatDate(dateStr) {
 }
 
 function getArticleLeague(article) {
-  if (!article?.league) return "OTHER";
+  // return uppercase league key or null when not provided
+  if (!article?.league) return null;
   return article.league.toUpperCase();
 }
 
@@ -208,10 +209,9 @@ function App() {
       if (typeFilter !== "ALL" && (a.type || "OTHER") !== typeFilter) {
         return false;
       }
-      if (
-        leagueFilter !== "ALL" &&
-        (a.league || "OTHER").toUpperCase() !== leagueFilter
-      ) {
+      // normalize article league to a league key using helper
+      const articleLeagueKey = getArticleLeague(a);
+      if (leagueFilter !== "ALL" && articleLeagueKey !== leagueFilter) {
         return false;
       }
       return true;
@@ -287,15 +287,10 @@ function App() {
                 >
                   <option value="ALL">All leagues</option>
                   {
-                    // show only leagues that have data (if standings loaded)
-                    Object.keys(standingsByLeague).length > 0
-                      ? STANDINGS_LEAGUES.filter(lg => Array.isArray(standingsByLeague[lg.key]) && standingsByLeague[lg.key].length > 0)
-                          .map(lg => (
-                            <option key={lg.key} value={lg.key}>{lg.label}</option>
-                          ))
-                      : Object.entries(LEAGUE_TAGS).map(([key, label]) => (
-                          <option key={key} value={key}>{label}</option>
-                        ))
+                    // Always offer all known leagues (there may be articles even when standings data is missing)
+                    STANDINGS_LEAGUES.map((lg) => (
+                      <option key={lg.key} value={lg.key}>{lg.label}</option>
+                    ))
                   }
                 </select>
               </div>
@@ -305,8 +300,11 @@ function App() {
             <div className="articles-list">
               {filteredArticles.map((article) => {
                 const leagueKey = getArticleLeague(article);
-                const leagueLabel =
-                  LEAGUE_TAGS[leagueKey] || leagueKey || "Other";
+                // only compute a label when we have a league key
+                // hide generic 'OTHER' values from the UI
+                const leagueLabel = leagueKey && leagueKey !== "OTHER"
+                  ? (LEAGUE_TAGS[leagueKey] || leagueKey)
+                  : null;
 
                 const typeTag = getArticleTypeTag(article);
 
@@ -438,10 +436,9 @@ function App() {
           ) : selectedArticle ? (
             <article className="article-card">
               <div className="article-meta-row">
-                {selectedArticle.league && (
+                {selectedArticle.league && selectedArticle.league.toLowerCase() !== "other" && (
                   <span className="tag tag-league">
-                    {LEAGUE_TAGS[getArticleLeague(selectedArticle)] ||
-                      selectedArticle.league}
+                    {LEAGUE_TAGS[getArticleLeague(selectedArticle)] || selectedArticle.league}
                   </span>
                 )}
                 {selectedArticle.type && (

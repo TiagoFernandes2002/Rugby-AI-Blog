@@ -20,7 +20,7 @@ export function ArticleDetail({ article }) {
     <article className="card card--article">
       <header className="article-header">
         <div className="article-tags-row">
-          {article.league && (
+          {article.league && article.league.toLowerCase() !== "other" && (
             <span className="tag tag-league">{article.league}</span>
           )}
           {article.type && (
