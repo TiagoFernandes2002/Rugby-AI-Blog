@@ -1,0 +1,671 @@
+{
+  "get": "standings",
+  "parameters": {
+	"league": "16",
+	"season": "2022"
+  },
+  "errors": [],
+  "results": 1,
+  "response": [
+	[
+	  {
+		"position": 1,
+		"stage": "Top 14",
+		"group": {
+		  "name": "Regular Season"
+		},
+		"team": {
+		  "id": 107,
+		  "name": "Stade Toulousain",
+		  "logo": "https://media.api-sports.io/rugby/teams/107.png"
+		},
+		"league": {
+		  "id": 16,
+		  "name": "Top 14",
+		  "type": "League",
+		  "logo": "https://media.api-sports.io/rugby/leagues/16.png",
+		  "season": 2022
+		},
+		"country": {
+		  "id": 7,
+		  "name": "France",
+		  "code": "FR",
+		  "flag": "https://media.api-sports.io/flags/fr.svg"
+		},
+		"games": {
+		  "played": 26,
+		  "win": {
+			"total": 17,
+			"percentage": "65.38"
+		  },
+		  "draw": {
+			"total": 1,
+			"percentage": "3.85"
+		  },
+		  "lose": {
+			"total": 8,
+			"percentage": "30.77"
+		  }
+		},
+		"goals": {
+		  "for": 682,
+		  "against": 474
+		},
+		"points": 81,
+		"form": "WLWLW",
+		"description": null
+	  },
+	  {
+		"position": 2,
+		"stage": "Top 14",
+		"group": {
+		  "name": "Regular Season"
+		},
+		"team": {
+		  "id": 0,
+		  "name": "Stade Rochelais",
+		  "logo": "https://media.api-sports.io/rugby/teams/0.png"
+		},
+		"league": {
+		  "id": 16,
+		  "name": "Top 14",
+		  "type": "League",
+		  "logo": "https://media.api-sports.io/rugby/leagues/16.png",
+		  "season": 2022
+		},
+		"country": {
+		  "id": 7,
+		  "name": "France",
+		  "code": "FR",
+		  "flag": "https://media.api-sports.io/flags/fr.svg"
+		},
+		"games": {
+		  "played": 26,
+		  "win": {
+			"total": 17,
+			"percentage": "65.38"
+		  },
+		  "draw": {
+			"total": 0,
+			"percentage": "0.00"
+		  },
+		  "lose": {
+			"total": 9,
+			"percentage": "34.62"
+		  }
+		},
+		"goals": {
+		  "for": 673,
+		  "against": 479
+		},
+		"points": 78,
+		"form": "WLWWW",
+		"description": null
+	  },
+	  {
+		"position": 3,
+		"stage": "Top 14",
+		"group": {
+		  "name": "Regular Season"
+		},
+		"team": {
+		  "id": 101,
+		  "name": "Lyon",
+		  "logo": "https://media.api-sports.io/rugby/teams/101.png"
+		},
+		"league": {
+		  "id": 16,
+		  "name": "Top 14",
+		  "type": "League",
+		  "logo": "https://media.api-sports.io/rugby/leagues/16.png",
+		  "season": 2022
+		},
+		"country": {
+		  "id": 7,
+		  "name": "France",
+		  "code": "FR",
+		  "flag": "https://media.api-sports.io/flags/fr.svg"
+		},
+		"games": {
+		  "played": 26,
+		  "win": {
+			"total": 14,
+			"percentage": "53.85"
+		  },
+		  "draw": {
+			"total": 1,
+			"percentage": "3.85"
+		  },
+		  "lose": {
+			"total": 11,
+			"percentage": "42.31"
+		  }
+		},
+		"goals": {
+		  "for": 690,
+		  "against": 626
+		},
+		"points": 67,
+		"form": "WWLL",
+		"description": null
+	  },
+	  {
+		"position": 4,
+		"stage": "Top 14",
+		"group": {
+		  "name": "Regular Season"
+		},
+		"team": {
+		  "id": 106,
+		  "name": "Stade Francais Paris",
+		  "logo": "https://media.api-sports.io/rugby/teams/106.png"
+		},
+		"league": {
+		  "id": 16,
+		  "name": "Top 14",
+		  "type": "League",
+		  "logo": "https://media.api-sports.io/rugby/leagues/16.png",
+		  "season": 2022
+		},
+		"country": {
+		  "id": 7,
+		  "name": "France",
+		  "code": "FR",
+		  "flag": "https://media.api-sports.io/flags/fr.svg"
+		},
+		"games": {
+		  "played": 26,
+		  "win": {
+			"total": 13,
+			"percentage": "50.00"
+		  },
+		  "draw": {
+			"total": 2,
+			"percentage": "7.69"
+		  },
+		  "lose": {
+			"total": 11,
+			"percentage": "42.31"
+		  }
+		},
+		"goals": {
+		  "for": 616,
+		  "against": 480
+		},
+		"points": 67,
+		"form": "LLWW",
+		"description": null
+	  },
+	  {
+		"position": 5,
+		"stage": "Top 14",
+		"group": {
+		  "name": "Regular Season"
+		},
+		"team": {
+		  "id": 104,
+		  "name": "Racing 92",
+		  "logo": "https://media.api-sports.io/rugby/teams/104.png"
+		},
+		"league": {
+		  "id": 16,
+		  "name": "Top 14",
+		  "type": "League",
+		  "logo": "https://media.api-sports.io/rugby/leagues/16.png",
+		  "season": 2022
+		},
+		"country": {
+		  "id": 7,
+		  "name": "France",
+		  "code": "FR",
+		  "flag": "https://media.api-sports.io/flags/fr.svg"
+		},
+		"games": {
+		  "played": 26,
+		  "win": {
+			"total": 14,
+			"percentage": "53.85"
+		  },
+		  "draw": {
+			"total": 1,
+			"percentage": "3.85"
+		  },
+		  "lose": {
+			"total": 11,
+			"percentage": "42.31"
+		  }
+		},
+		"goals": {
+		  "for": 734,
+		  "against": 684
+		},
+		"points": 66,
+		"form": "LWWLW",
+		"description": null
+	  },
+	  {
+		"position": 6,
+		"stage": "Top 14",
+		"group": {
+		  "name": "Regular Season"
+		},
+		"team": {
+		  "id": 96,
+		  "name": "Bordeaux Begles",
+		  "logo": "https://media.api-sports.io/rugby/teams/96.png"
+		},
+		"league": {
+		  "id": 16,
+		  "name": "Top 14",
+		  "type": "League",
+		  "logo": "https://media.api-sports.io/rugby/leagues/16.png",
+		  "season": 2022
+		},
+		"country": {
+		  "id": 7,
+		  "name": "France",
+		  "code": "FR",
+		  "flag": "https://media.api-sports.io/flags/fr.svg"
+		},
+		"games": {
+		  "played": 26,
+		  "win": {
+			"total": 13,
+			"percentage": "50.00"
+		  },
+		  "draw": {
+			"total": 1,
+			"percentage": "3.85"
+		  },
+		  "lose": {
+			"total": 12,
+			"percentage": "46.15"
+		  }
+		},
+		"goals": {
+		  "for": 576,
+		  "against": 501
+		},
+		"points": 63,
+		"form": "LWLWL",
+		"description": null
+	  },
+	  {
+		"position": 7,
+		"stage": "Top 14",
+		"group": {
+		  "name": "Regular Season"
+		},
+		"team": {
+		  "id": 103,
+		  "name": "RC Toulonnais",
+		  "logo": "https://media.api-sports.io/rugby/teams/103.png"
+		},
+		"league": {
+		  "id": 16,
+		  "name": "Top 14",
+		  "type": "League",
+		  "logo": "https://media.api-sports.io/rugby/leagues/16.png",
+		  "season": 2022
+		},
+		"country": {
+		  "id": 7,
+		  "name": "France",
+		  "code": "FR",
+		  "flag": "https://media.api-sports.io/flags/fr.svg"
+		},
+		"games": {
+		  "played": 26,
+		  "win": {
+			"total": 14,
+			"percentage": "53.85"
+		  },
+		  "draw": {
+			"total": 0,
+			"percentage": "0.00"
+		  },
+		  "lose": {
+			"total": 12,
+			"percentage": "46.15"
+		  }
+		},
+		"goals": {
+		  "for": 588,
+		  "against": 557
+		},
+		"points": 61,
+		"form": "WLLLW",
+		"description": null
+	  },
+	  {
+		"position": 8,
+		"stage": "Top 14",
+		"group": {
+		  "name": "Regular Season"
+		},
+		"team": {
+		  "id": 95,
+		  "name": "Aviron Bayonnais",
+		  "logo": "https://media.api-sports.io/rugby/teams/95.png"
+		},
+		"league": {
+		  "id": 16,
+		  "name": "Top 14",
+		  "type": "League",
+		  "logo": "https://media.api-sports.io/rugby/leagues/16.png",
+		  "season": 2022
+		},
+		"country": {
+		  "id": 7,
+		  "name": "France",
+		  "code": "FR",
+		  "flag": "https://media.api-sports.io/flags/fr.svg"
+		},
+		"games": {
+		  "played": 26,
+		  "win": {
+			"total": 13,
+			"percentage": "50.00"
+		  },
+		  "draw": {
+			"total": 1,
+			"percentage": "3.85"
+		  },
+		  "lose": {
+			"total": 12,
+			"percentage": "46.15"
+		  }
+		},
+		"goals": {
+		  "for": 596,
+		  "against": 662
+		},
+		"points": 58,
+		"form": "LWLWL",
+		"description": null
+	  },
+	  {
+		"position": 9,
+		"stage": "Top 14",
+		"group": {
+		  "name": "Regular Season"
+		},
+		"team": {
+		  "id": 98,
+		  "name": "Castres Olympique",
+		  "logo": "https://media.api-sports.io/rugby/teams/98.png"
+		},
+		"league": {
+		  "id": 16,
+		  "name": "Top 14",
+		  "type": "League",
+		  "logo": "https://media.api-sports.io/rugby/leagues/16.png",
+		  "season": 2022
+		},
+		"country": {
+		  "id": 7,
+		  "name": "France",
+		  "code": "FR",
+		  "flag": "https://media.api-sports.io/flags/fr.svg"
+		},
+		"games": {
+		  "played": 26,
+		  "win": {
+			"total": 13,
+			"percentage": "50.00"
+		  },
+		  "draw": {
+			"total": 1,
+			"percentage": "3.85"
+		  },
+		  "lose": {
+			"total": 12,
+			"percentage": "46.15"
+		  }
+		},
+		"goals": {
+		  "for": 532,
+		  "against": 635
+		},
+		"points": 57,
+		"form": "WWLWW",
+		"description": null
+	  },
+	  {
+		"position": 10,
+		"stage": "Top 14",
+		"group": {
+		  "name": "Regular Season"
+		},
+		"team": {
+		  "id": 99,
+		  "name": "Clermont",
+		  "logo": "https://media.api-sports.io/rugby/teams/99.png"
+		},
+		"league": {
+		  "id": 16,
+		  "name": "Top 14",
+		  "type": "League",
+		  "logo": "https://media.api-sports.io/rugby/leagues/16.png",
+		  "season": 2022
+		},
+		"country": {
+		  "id": 7,
+		  "name": "France",
+		  "code": "FR",
+		  "flag": "https://media.api-sports.io/flags/fr.svg"
+		},
+		"games": {
+		  "played": 26,
+		  "win": {
+			"total": 11,
+			"percentage": "42.31"
+		  },
+		  "draw": {
+			"total": 1,
+			"percentage": "3.85"
+		  },
+		  "lose": {
+			"total": 14,
+			"percentage": "53.85"
+		  }
+		},
+		"goals": {
+		  "for": 588,
+		  "against": 627
+		},
+		"points": 56,
+		"form": "WLWLL",
+		"description": null
+	  },
+	  {
+		"position": 11,
+		"stage": "Top 14",
+		"group": {
+		  "name": "Regular Season"
+		},
+		"team": {
+		  "id": 102,
+		  "name": "Montpellier",
+		  "logo": "https://media.api-sports.io/rugby/teams/102.png"
+		},
+		"league": {
+		  "id": 16,
+		  "name": "Top 14",
+		  "type": "League",
+		  "logo": "https://media.api-sports.io/rugby/leagues/16.png",
+		  "season": 2022
+		},
+		"country": {
+		  "id": 7,
+		  "name": "France",
+		  "code": "FR",
+		  "flag": "https://media.api-sports.io/flags/fr.svg"
+		},
+		"games": {
+		  "played": 26,
+		  "win": {
+			"total": 11,
+			"percentage": "42.31"
+		  },
+		  "draw": {
+			"total": 0,
+			"percentage": "0.00"
+		  },
+		  "lose": {
+			"total": 15,
+			"percentage": "57.69"
+		  }
+		},
+		"goals": {
+		  "for": 624,
+		  "against": 617
+		},
+		"points": 54,
+		"form": "LWLLL",
+		"description": null
+	  },
+	  {
+		"position": 12,
+		"stage": "Top 14",
+		"group": {
+		  "name": "Regular Season"
+		},
+		"team": {
+		  "id": 105,
+		  "name": "Section Paloise",
+		  "logo": "https://media.api-sports.io/rugby/teams/105.png"
+		},
+		"league": {
+		  "id": 16,
+		  "name": "Top 14",
+		  "type": "League",
+		  "logo": "https://media.api-sports.io/rugby/leagues/16.png",
+		  "season": 2022
+		},
+		"country": {
+		  "id": 7,
+		  "name": "France",
+		  "code": "FR",
+		  "flag": "https://media.api-sports.io/flags/fr.svg"
+		},
+		"games": {
+		  "played": 26,
+		  "win": {
+			"total": 10,
+			"percentage": "38.46"
+		  },
+		  "draw": {
+			"total": 1,
+			"percentage": "3.85"
+		  },
+		  "lose": {
+			"total": 15,
+			"percentage": "57.69"
+		  }
+		},
+		"goals": {
+		  "for": 591,
+		  "against": 634
+		},
+		"points": 52,
+		"form": "WLWLW",
+		"description": null
+	  },
+	  {
+		"position": 13,
+		"stage": "Top 14",
+		"group": {
+		  "name": "Regular Season"
+		},
+		"team": {
+		  "id": 120,
+		  "name": "USA Perpignan",
+		  "logo": "https://media.api-sports.io/rugby/teams/120.png"
+		},
+		"league": {
+		  "id": 16,
+		  "name": "Top 14",
+		  "type": "League",
+		  "logo": "https://media.api-sports.io/rugby/leagues/16.png",
+		  "season": 2022
+		},
+		"country": {
+		  "id": 7,
+		  "name": "France",
+		  "code": "FR",
+		  "flag": "https://media.api-sports.io/flags/fr.svg"
+		},
+		"games": {
+		  "played": 26,
+		  "win": {
+			"total": 10,
+			"percentage": "38.46"
+		  },
+		  "draw": {
+			"total": 0,
+			"percentage": "0.00"
+		  },
+		  "lose": {
+			"total": 16,
+			"percentage": "61.54"
+		  }
+		},
+		"goals": {
+		  "for": 503,
+		  "against": 726
+		},
+		"points": 43,
+		"form": "LWLWL",
+		"description": "Pro D2 (Relegation)"
+	  },
+	  {
+		"position": 14,
+		"stage": "Top 14",
+		"group": {
+		  "name": "Regular Season"
+		},
+		"team": {
+		  "id": 97,
+		  "name": "CA Brive",
+		  "logo": "https://media.api-sports.io/rugby/teams/97.png"
+		},
+		"league": {
+		  "id": 16,
+		  "name": "Top 14",
+		  "type": "League",
+		  "logo": "https://media.api-sports.io/rugby/leagues/16.png",
+		  "season": 2022
+		},
+		"country": {
+		  "id": 7,
+		  "name": "France",
+		  "code": "FR",
+		  "flag": "https://media.api-sports.io/flags/fr.svg"
+		},
+		"games": {
+		  "played": 26,
+		  "win": {
+			"total": 7,
+			"percentage": "26.92"
+		  },
+		  "draw": {
+			"total": 0,
+			"percentage": "0.00"
+		  },
+		  "lose": {
+			"total": 19,
+			"percentage": "73.08"
+		  }
+		},
+		"goals": {
+		  "for": 440,
+		  "against": 731
+		},
+		"points": 36,
+		"form": "LLWWL",
+		"description": "Relegation - Pro D2"
+	  }
+	]
+  ]
+}

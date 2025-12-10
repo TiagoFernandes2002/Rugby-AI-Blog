@@ -1,0 +1,169 @@
+{
+	"get": "standings",
+	"parameters": {
+		"league": "76",
+		"season": "2022"
+	},
+	"errors": [],
+	"results": 1,
+	"response": [
+		[
+			{
+				"position": 1,
+				"stage": "Guinness Pro14",
+				"group": { "name": "Group A" },
+				"team": { "id": 407, "name": "Leinster", "logo": "https://media.api-sports.io/rugby/teams/407.png" },
+				"league": { "id": 76, "name": "United Rugby Championship", "type": "cup", "logo": "https://media.api-sports.io/rugby/leagues/76.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 16, "win": { "total": 14, "percentage": "87.50" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 2, "percentage": "12.50" } },
+				"goals": { "for": 576, "against": 285 },
+				"points": 71,
+				"form": "LWWWW",
+				"description": null
+			},
+			{
+				"position": 2,
+				"stage": "Guinness Pro14",
+				"group": { "name": "Group A" },
+				"team": { "id": 409, "name": "Ulster", "logo": "https://media.api-sports.io/rugby/teams/409.png" },
+				"league": { "id": 76, "name": "United Rugby Championship", "type": "cup", "logo": "https://media.api-sports.io/rugby/leagues/76.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 16, "win": { "total": 14, "percentage": "87.50" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 2, "percentage": "12.50" } },
+				"goals": { "for": 469, "against": 263 },
+				"points": 64,
+				"form": "WWLWW",
+				"description": "Promotion - European Rugby Champions Cup"
+			},
+			{
+				"position": 3,
+				"stage": "Guinness Pro14",
+				"group": { "name": "Group A" },
+				"team": { "id": 394, "name": "Ospreys", "logo": "https://media.api-sports.io/rugby/teams/394.png" },
+				"league": { "id": 76, "name": "United Rugby Championship", "type": "cup", "logo": "https://media.api-sports.io/rugby/leagues/76.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 16, "win": { "total": 8, "percentage": "50.00" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 8, "percentage": "50.00" } },
+				"goals": { "for": 301, "against": 318 },
+				"points": 36,
+				"form": "WLLLW",
+				"description": "Promotion - European Rugby Champions Cup"
+			},
+			{
+				"position": 4,
+				"stage": "Guinness Pro14",
+				"group": { "name": "Group A" },
+				"team": { "id": 406, "name": "Glasgow Warriors", "logo": "https://media.api-sports.io/rugby/teams/406.png" },
+				"league": { "id": 76, "name": "United Rugby Championship", "type": "cup", "logo": "https://media.api-sports.io/rugby/leagues/76.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 16, "win": { "total": 6, "percentage": "37.50" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 10, "percentage": "62.50" } },
+				"goals": { "for": 335, "against": 377 },
+				"points": 30,
+				"form": "WLWWL",
+				"description": "Promotion - Guinness Pro14 (7th-8th places)"
+			},
+			{
+				"position": 5,
+				"stage": "Guinness Pro14",
+				"group": { "name": "Group A" },
+				"team": { "id": 396, "name": "Dragons", "logo": "https://media.api-sports.io/rugby/teams/396.png" },
+				"league": { "id": 76, "name": "United Rugby Championship", "type": "cup", "logo": "https://media.api-sports.io/rugby/leagues/76.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 16, "win": { "total": 6, "percentage": "37.50" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 10, "percentage": "62.50" } },
+				"goals": { "for": 315, "against": 394 },
+				"points": 29,
+				"form": "WWLWL",
+				"description": null
+			},
+			{
+				"position": 6,
+				"stage": "Guinness Pro14",
+				"group": { "name": "Group A" },
+				"team": { "id": 395, "name": "Zebre", "logo": "https://media.api-sports.io/rugby/teams/395.png" },
+				"league": { "id": 76, "name": "United Rugby Championship", "type": "cup", "logo": "https://media.api-sports.io/rugby/leagues/76.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 16, "win": { "total": 4, "percentage": "25.00" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 12, "percentage": "75.00" } },
+				"goals": { "for": 237, "against": 508 },
+				"points": 17,
+				"form": "LLLWL",
+				"description": null
+			},
+			{
+				"position": 1,
+				"stage": "Guinness Pro14",
+				"group": { "name": "Group B" },
+				"team": { "id": 408, "name": "Munster", "logo": "https://media.api-sports.io/rugby/teams/408.png" },
+				"league": { "id": 76, "name": "United Rugby Championship", "type": "cup", "logo": "https://media.api-sports.io/rugby/leagues/76.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 16, "win": { "total": 14, "percentage": "87.50" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 2, "percentage": "12.50" } },
+				"goals": { "for": 413, "against": 250 },
+				"points": 64,
+				"form": "WWWWW",
+				"description": null
+			},
+			{
+				"position": 2,
+				"stage": "Guinness Pro14",
+				"group": { "name": "Group B" },
+				"team": { "id": 398, "name": "Connacht", "logo": "https://media.api-sports.io/rugby/teams/398.png" },
+				"league": { "id": 76, "name": "United Rugby Championship", "type": "cup", "logo": "https://media.api-sports.io/rugby/leagues/76.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 16, "win": { "total": 8, "percentage": "50.00" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 8, "percentage": "50.00" } },
+				"goals": { "for": 396, "against": 353 },
+				"points": 45,
+				"form": "LLLWW",
+				"description": "Promotion - European Rugby Champions Cup"
+			},
+			{
+				"position": 3,
+				"stage": "Guinness Pro14",
+				"group": { "name": "Group B" },
+				"team": { "id": 397, "name": "Scarlets", "logo": "https://media.api-sports.io/rugby/teams/397.png" },
+				"league": { "id": 76, "name": "United Rugby Championship", "type": "cup", "logo": "https://media.api-sports.io/rugby/leagues/76.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 16, "win": { "total": 8, "percentage": "50.00" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 8, "percentage": "50.00" } },
+				"goals": { "for": 319, "against": 333 },
+				"points": 39,
+				"form": "WLWWL",
+				"description": "Promotion - European Rugby Champions Cup"
+			},
+			{
+				"position": 4,
+				"stage": "Guinness Pro14",
+				"group": { "name": "Group B" },
+				"team": { "id": 0, "name": "Cardiff Blues", "logo": "https://media.api-sports.io/rugby/teams/0.png" },
+				"league": { "id": 76, "name": "United Rugby Championship", "type": "cup", "logo": "https://media.api-sports.io/rugby/leagues/76.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 16, "win": { "total": 8, "percentage": "50.00" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 8, "percentage": "50.00" } },
+				"goals": { "for": 265, "against": 284 },
+				"points": 36,
+				"form": "WWLLW",
+				"description": "Promotion - Guinness Pro14 (7th-8th places)"
+			},
+			{
+				"position": 5,
+				"stage": "Guinness Pro14",
+				"group": { "name": "Group B" },
+				"team": { "id": 279, "name": "Edinburgh", "logo": "https://media.api-sports.io/rugby/teams/279.png" },
+				"league": { "id": 76, "name": "United Rugby Championship", "type": "cup", "logo": "https://media.api-sports.io/rugby/leagues/76.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 16, "win": { "total": 5, "percentage": "31.25" }, "draw": { "total": 1, "percentage": "6.25" }, "lose": { "total": 10, "percentage": "62.50" } },
+				"goals": { "for": 247, "against": 344 },
+				"points": 29,
+				"form": "LLWWL",
+				"description": null
+			},
+			{
+				"position": 6,
+				"stage": "Guinness Pro14",
+				"group": { "name": "Group B" },
+				"team": { "id": 392, "name": "Benetton", "logo": "https://media.api-sports.io/rugby/teams/392.png" },
+				"league": { "id": 76, "name": "United Rugby Championship", "type": "cup", "logo": "https://media.api-sports.io/rugby/leagues/76.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 16, "win": { "total": 0, "percentage": "0.00" }, "draw": { "total": 1, "percentage": "6.25" }, "lose": { "total": 15, "percentage": "93.75" } },
+				"goals": { "for": 251, "against": 415 },
+				"points": 7,
+				"form": "LLLLL",
+				"description": null
+			}
+		]
+	]
+}

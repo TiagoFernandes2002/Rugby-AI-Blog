@@ -1,600 +1,488 @@
-import { useEffect, useMemo, useState } from "react";
-import "./App.css";
+// frontend/src/App.jsx
+import React, { useEffect, useMemo, useState } from "react";
 import { api } from "./api/client";
+import { getStandingsFromLocal, parseStandingsData } from "./api/standingsLocal";
+import { StandingsWidget } from "./components/StandingsWidget";
+import FullStandings from "./components/FullStandings";
+import "./App.css";
 
-// ---- Configuração de tipos e ligas ----
+// liga -> tag que usamos nos artigos
+const LEAGUE_TAGS = {
+  TOP14: "Top 14",
+  PREMIERSHIP: "Premiership",
+  URC: "URC",
+  SUPER_RUGBY: "Super Rugby",
+  SIX_NATIONS: "Six Nations",
+  RUGBY_CHAMPIONSHIP: "Rugby Championship",
+  RUGBY_WORLD_CUP: "Rugby World Cup",
+  CHAMPIONS_CUP: "Champions Cup",
+  CN_HONRA_PORTUGAL: "CN Honra Portugal",
+};
 
-const ARTICLE_TYPES = [
-  { value: "all", label: "All types" },
-  { value: "intro", label: "Intro" },
-  { value: "vlog", label: "Vlog" },
-  { value: "roundup", label: "Weekly round-up" },
+// ligas para o widget de standings (IDs são da API-Sports)
+const STANDINGS_LEAGUES = [
+  { key: "TOP14", label: "Top 14", id: 16 },
+  { key: "PREMIERSHIP", label: "Premiership Rugby", id: 13 },
+  { key: "URC", label: "United Rugby Championship", id: 76 },
+  { key: "SUPER_RUGBY", label: "Super Rugby", id: 71 },
+  { key: "SIX_NATIONS", label: "Six Nations", id: 51 },
+  { key: "RUGBY_CHAMPIONSHIP", label: "Rugby Championship", id: 85 },
+  { key: "RUGBY_WORLD_CUP", label: "Rugby World Cup", id: 69 },
+  { key: "CHAMPIONS_CUP", label: "Champions Cup", id: 54 },
+  { key: "CN_HONRA_PORTUGAL", label: "CN Honra Portugal", id: 31 },
 ];
 
-// Liga key -> label e id da API de standings
-const LEAGUES = [
-  { value: "all", label: "All leagues" },
-  { value: "TOP14", label: "Top 14", standingsLeagueId: 16 },
-  { value: "PREMIERSHIP", label: "Premiership Rugby", standingsLeagueId: 13 },
-  { value: "URC", label: "URC", standingsLeagueId: 76 },
-  { value: "SUPER_RUGBY", label: "Super Rugby", standingsLeagueId: 71 },
-  { value: "SIX_NATIONS", label: "Six Nations", standingsLeagueId: 51 },
-  { value: "RUGBY_CHAMPIONSHIP", label: "Rugby Championship", standingsLeagueId: 85 },
-  { value: "RUGBY_WORLD_CUP", label: "Rugby World Cup", standingsLeagueId: 69 },
-];
-
-// Só as ligas que queremos percorrer no widget de standings
-const STANDINGS_LEAGUES = LEAGUES.filter(
-  (l) => l.value !== "all" && l.standingsLeagueId
-);
-
-// ---- Helpers ----
-
-function formatDate(dateString) {
-  if (!dateString) return "";
-  const d = new Date(dateString);
-  if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString("en-GB");
+function formatDate(dateStr) {
+  if (!dateStr) return "No date";
+  const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return "No date";
+  return d.toLocaleDateString("pt-PT", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 }
 
-function getLeagueLabelFromArticle(article) {
-  const key = (article.leagueKey || article.league || "").toUpperCase();
-  const found = LEAGUES.find((l) => l.value === key);
-  return found?.label ?? null;
+function getArticleLeague(article) {
+  if (!article?.league) return "OTHER";
+  return article.league.toUpperCase();
 }
 
-function getTypeLabel(type) {
-  switch ((type || "").toLowerCase()) {
-    case "intro":
-      return "Intro";
-    case "vlog":
-      return "Vlog";
-    case "roundup":
-      return "Weekly round-up";
-    default:
-      return "Article";
-  }
+function getArticleTypeTag(article) {
+  if (!article?.type) return "OTHER";
+  if (article.type === "vlog") return "VLOG";
+  if (article.type === "roundup") return "ROUND-UP";
+  if (article.type === "intro") return "INTRO";
+  return article.type.toUpperCase();
 }
 
-// ---- Componentes pequenos (tags / linha da lista) ----
-
-function Tag({ children, kind = "default" }) {
-  return <span className={`tag tag-${kind}`}>{children}</span>;
-}
-
-function ArticleListItem({ article, isActive, onClick }) {
-  const date = formatDate(article.createdAt);
-  const league = getLeagueLabelFromArticle(article);
-  const typeLabel = getTypeLabel(article.type);
-
-  return (
-    <button
-      type="button"
-      className={`article-list-item ${isActive ? "article-list-item-active" : ""}`}
-      onClick={onClick}
-    >
-      <div className="article-list-item-title">{article.title}</div>
-      <div className="article-list-item-meta">
-        {date && <Tag kind="date">{date}</Tag>}
-        {article.type && (
-          <Tag kind={`type-${(article.type || "").toLowerCase()}`}>{typeLabel}</Tag>
-        )}
-        {league && <Tag kind="league">{league}</Tag>}
-      </div>
-    </button>
-  );
-}
-
-// ---- Standings (widget + página completa) ----
-
-function StandingsWidget({
-  currentLeagueIndex,
-  onPrevLeague,
-  onNextLeague,
-  data,
-  loading,
-  error,
-  onOpenFullStandings,
-}) {
-  const league = STANDINGS_LEAGUES[currentLeagueIndex];
-
-  return (
-    <div
-      className="standings-card"
-      onClick={onOpenFullStandings}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => e.key === "Enter" && onOpenFullStandings()}
-    >
-      <div className="standings-header">
-        <div>
-          <h3 className="standings-title">{league.label} – Standings</h3>
-          <p className="standings-subtitle">2022 season (snapshot)</p>
-        </div>
-        <div className="standings-nav">
-          <button
-            type="button"
-            className="icon-button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onPrevLeague();
-            }}
-          >
-            ‹
-          </button>
-          <button
-            type="button"
-            className="icon-button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onNextLeague();
-            }}
-          >
-            ›
-          </button>
-        </div>
-      </div>
-
-      <div className="standings-table-wrapper compact">
-        {loading && <div className="standings-placeholder">Loading standings…</div>}
-        {error && <div className="standings-error">{error}</div>}
-        {!loading && !error && data && data.length > 0 && (
-          <table className="standings-table compact">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Team</th>
-                <th>Pts</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.slice(0, 8).map((row) => (
-                <tr key={row.team.id ?? row.team.name}>
-                  <td>{row.position}</td>
-                  <td>{row.team.name}</td>
-                  <td>{row.points}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-        {!loading && !error && (!data || data.length === 0) && (
-          <div className="standings-placeholder">No standings data.</div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function StandingsFullPage({ leagueIndex, data, loading, error, onBack }) {
-  const league = STANDINGS_LEAGUES[leagueIndex];
-
-  return (
-    <div className="article-card article-card-standings">
-      <div className="article-card-header">
-        <div className="article-tags">
-          <Tag kind="league">{league.label}</Tag>
-          <Tag kind="date">Season 2022</Tag>
-        </div>
-        <h1 className="article-title">{league.label} – Full Standings</h1>
-      </div>
-
-      <button type="button" className="back-link" onClick={onBack}>
-        ← Back to articles
-      </button>
-
-      <div className="standings-table-wrapper">
-        {loading && <div className="standings-placeholder">Loading standings…</div>}
-        {error && <div className="standings-error">{error}</div>}
-        {!loading && !error && data && data.length > 0 && (
-          <table className="standings-table full">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Team</th>
-                <th>Played</th>
-                <th>W</th>
-                <th>D</th>
-                <th>L</th>
-                <th>Pts</th>
-                <th>For</th>
-                <th>Against</th>
-                <th>Form</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((row) => (
-                <tr key={row.team.id ?? row.team.name}>
-                  <td>{row.position}</td>
-                  <td>{row.team.name}</td>
-                  <td>{row.games.played}</td>
-                  <td>{row.games.win.total}</td>
-                  <td>{row.games.draw.total}</td>
-                  <td>{row.games.lose.total}</td>
-                  <td>{row.points}</td>
-                  <td>{row.goals.for}</td>
-                  <td>{row.goals.against}</td>
-                  <td>{row.form}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-        {!loading && !error && (!data || data.length === 0) && (
-          <div className="standings-placeholder">No standings data.</div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ---- App principal ----
-
-export default function App() {
+function App() {
+  // --------- artigos ----------
   const [articles, setArticles] = useState([]);
-  const [loadingArticles, setLoadingArticles] = useState(false);
-  const [articlesError, setArticlesError] = useState("");
-
   const [selectedArticleId, setSelectedArticleId] = useState(null);
-  const [typeFilter, setTypeFilter] = useState("all");
-  const [leagueFilter, setLeagueFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("ALL");
+  const [leagueFilter, setLeagueFilter] = useState("ALL");
 
-  // page: "article" | "standings"
-  const [page, setPage] = useState("article");
-
-  // mobile
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  // standings
-  const [standingsLeagueIndex, setStandingsLeagueIndex] = useState(0);
-  const [standingsData, setStandingsData] = useState(null);
-  const [loadingStandings, setLoadingStandings] = useState(false);
+  // --------- standings ----------
+  const [standingsByLeague, setStandingsByLeague] = useState({});
+  const [standingsLoading, setStandingsLoading] = useState(false);
   const [standingsError, setStandingsError] = useState("");
+  const [standingsLeagueIndex, setStandingsLeagueIndex] = useState(0);
+  const [fullStandings, setFullStandings] = useState(null);
+  const [mobilePanelOpen, setMobilePanelOpen] = useState(false);
+  const season = 2022;
 
-  // ---- Carregar artigos ----
+  // --------- load artigos ----------
   useEffect(() => {
     async function loadArticles() {
       try {
-        setLoadingArticles(true);
-        setArticlesError("");
         const res = await api.get("/articles");
-        setArticles(res.data || []);
+        const list = Array.isArray(res.data) ? res.data : [];
+        list.sort((a, b) => {
+          const da = new Date(a.date || 0).getTime();
+          const db = new Date(b.date || 0).getTime();
+          return db - da;
+        });
+        setArticles(list);
+        if (list.length && !selectedArticleId) {
+          setSelectedArticleId(list[0].id);
+        }
       } catch (err) {
-        console.error(err);
-        setArticlesError("Failed to load articles.");
-      } finally {
-        setLoadingArticles(false);
+        console.error("Error loading articles", err);
       }
     }
-
     loadArticles();
-  }, []);
+  }, [selectedArticleId]);
 
-  // garantir artigo selecionado
+  const selectedArticle = useMemo(
+    () => articles.find((a) => a.id === selectedArticleId) || articles[0],
+    [articles, selectedArticleId]
+  );
+
+  // --------- load standings (de TODAS as ligas) ----------
   useEffect(() => {
-    if (!articles.length) return;
-    if (!selectedArticleId) {
-      setSelectedArticleId(articles[0].id);
-    }
-  }, [articles, selectedArticleId]);
+    let cancelled = false;
 
-  // ---- Standings ----
-  async function fetchStandingsForIndex(index) {
-    const league = STANDINGS_LEAGUES[index];
-    if (!league) return;
-
-    try {
-      setLoadingStandings(true);
+    async function loadStandings() {
+      setStandingsLoading(true);
       setStandingsError("");
-      setStandingsData(null);
+      setStandingsByLeague({});
 
-      const res = await api.get("/standings", {
-        params: { league: league.standingsLeagueId },
-      });
+      try {
+        const data = {};
 
-      // backend deve devolver { response: [[...]] } ou directamente array
-      let rows = [];
+        for (const lg of STANDINGS_LEAGUES) {
+          try {
+            // Try to load from local JSON files
+            const payload = await getStandingsFromLocal(lg.id, season);
+            console.log("Standings payload for", lg.label, payload);
 
-      if (Array.isArray(res.data)) {
-        rows = res.data;
-      } else if (Array.isArray(res.data?.response)) {
-        const firstLevel = res.data.response[0];
-        rows = Array.isArray(firstLevel) ? firstLevel : res.data.response;
+            let rows = parseStandingsData(payload);
+            data[lg.key] = rows;
+          } catch (innerErr) {
+            console.error(`Error loading standings for ${lg.label}`, innerErr);
+            data[lg.key] = [];
+          }
+        }
+
+        if (!cancelled) {
+          setStandingsByLeague(data);
+        }
+      } catch (err) {
+        console.error("Error loading standings", err);
+        if (!cancelled) setStandingsError("Failed to load standings.");
+      } finally {
+        if (!cancelled) setStandingsLoading(false);
       }
-
-      setStandingsData(rows || []);
-    } catch (err) {
-      console.error(err);
-      setStandingsError("Failed to load standings.");
-    } finally {
-      setLoadingStandings(false);
     }
+
+    loadStandings();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [season]);
+
+  const activeStandingsLeague = STANDINGS_LEAGUES[standingsLeagueIndex];
+  const activeStandingsTable =
+    standingsByLeague[activeStandingsLeague.key] || [];
+
+  // helper: find next index with available data (direction: 1 or -1)
+  function findNextAvailableIndex(fromIndex, direction) {
+    const n = STANDINGS_LEAGUES.length;
+    if (!standingsByLeague || Object.keys(standingsByLeague).length === 0) return fromIndex;
+    let i = fromIndex;
+    for (let k = 0; k < n; k++) {
+      i = (i + direction + n) % n;
+      const key = STANDINGS_LEAGUES[i].key;
+      const rows = standingsByLeague[key];
+      if (Array.isArray(rows) && rows.length > 0) return i;
+    }
+    return fromIndex;
   }
 
-  useEffect(() => {
-    fetchStandingsForIndex(standingsLeagueIndex);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [standingsLeagueIndex]);
+  function handleOpenFullStandings(league) {
+    // if no league provided, open current active league
+    const idx = typeof league === "number" ? league : standingsLeagueIndex;
+    const lg = STANDINGS_LEAGUES[idx];
+    const rows = standingsByLeague[lg.key] || [];
+    setStandingsLeagueIndex(idx);
+    setFullStandings({ leagueIndex: idx, leagueKey: lg.key, label: lg.label, rows });
+  }
 
-  const handlePrevLeague = () => {
-    setStandingsLeagueIndex((prev) =>
-      prev === 0 ? STANDINGS_LEAGUES.length - 1 : prev - 1
-    );
-  };
+  function handleCloseFullStandings() {
+    setFullStandings(null);
+  }
 
-  const handleNextLeague = () => {
-    setStandingsLeagueIndex((prev) =>
-      prev === STANDINGS_LEAGUES.length - 1 ? 0 : prev + 1
-    );
-  };
+  function handlePrevLeague() {
+    const next = findNextAvailableIndex(standingsLeagueIndex, -1);
+    setStandingsLeagueIndex(next);
+  }
 
-  // ---- Filtros ----
+  function handleNextLeague() {
+    const next = findNextAvailableIndex(standingsLeagueIndex, 1);
+    setStandingsLeagueIndex(next);
+  }
+
+  function handlePrevFull() {
+    if (!fullStandings) return;
+    const next = findNextAvailableIndex(fullStandings.leagueIndex, -1);
+    const lg = STANDINGS_LEAGUES[next];
+    const rows = standingsByLeague[lg.key] || [];
+    setStandingsLeagueIndex(next);
+    setFullStandings({ leagueIndex: next, leagueKey: lg.key, label: lg.label, rows });
+  }
+
+  function handleNextFull() {
+    if (!fullStandings) return;
+    const next = findNextAvailableIndex(fullStandings.leagueIndex, 1);
+    const lg = STANDINGS_LEAGUES[next];
+    const rows = standingsByLeague[lg.key] || [];
+    setStandingsLeagueIndex(next);
+    setFullStandings({ leagueIndex: next, leagueKey: lg.key, label: lg.label, rows });
+  }
+
+  // --------- filters ----------
   const filteredArticles = useMemo(() => {
-    let result = [...articles];
-
-    if (typeFilter !== "all") {
-      result = result.filter(
-        (a) => (a.type || "").toLowerCase() === typeFilter
-      );
-    }
-
-    if (leagueFilter !== "all") {
-      result = result.filter(
-        (a) =>
-          (a.leagueKey || a.league || "").toUpperCase() === leagueFilter
-      );
-    }
-
-    // ordenar por data desc, se existir
-    result.sort(
-      (a, b) =>
-        new Date(b.createdAt || 0).getTime() -
-        new Date(a.createdAt || 0).getTime()
-    );
-
-    return result;
+    return articles.filter((a) => {
+      if (typeFilter !== "ALL" && (a.type || "OTHER") !== typeFilter) {
+        return false;
+      }
+      if (
+        leagueFilter !== "ALL" &&
+        (a.league || "OTHER").toUpperCase() !== leagueFilter
+      ) {
+        return false;
+      }
+      return true;
+    });
   }, [articles, typeFilter, leagueFilter]);
 
-  const selectedArticle =
-    filteredArticles.find((a) => a.id === selectedArticleId) ||
-    filteredArticles[0] ||
-    null;
+  function handleSelectArticle(id) {
+    setSelectedArticleId(id);
+  }
 
-  // se mudarem filtros e o artigo selecionado sair da lista
-  useEffect(() => {
-    if (!selectedArticle && filteredArticles.length > 0) {
-      setSelectedArticleId(filteredArticles[0].id);
-    }
-  }, [filteredArticles, selectedArticle]);
+  function openMobilePanel() {
+    setMobilePanelOpen(true);
+  }
 
-  const handleSelectArticle = (articleId) => {
-    setPage("article");
-    setSelectedArticleId(articleId);
-    setMobileMenuOpen(false);
-  };
+  function closeMobilePanel() {
+    setMobilePanelOpen(false);
+  }
 
-  // ---- Render ----
-
-  const isMobile = window.innerWidth <= 900; // simples, suficiente aqui
-
+  // --------- render ----------
   return (
     <div className="app-root">
       <header className="app-header">
         <div>
-          <h1 className="app-title">Tiago&apos;s Rugby Analytics Blog</h1>
-          <p className="app-subtitle">
+          <h1>Tiago&apos;s Rugby Analytics Blog</h1>
+          <p>
             Personal rugby blog powered by automated AI analysis – showing my
             passion for tech and the sport.
           </p>
         </div>
-
-        {/* Botão hamburger (só em mobile) */}
-        <button
-          type="button"
-          className="icon-button mobile-only"
-          onClick={() => setMobileMenuOpen(true)}
-        >
-          <span className="icon-bars" />
-        </button>
+        <div>
+          <button
+            className="mobile-only icon-button"
+            aria-label="Open menu"
+            onClick={openMobilePanel}
+          >
+            <span className="icon-bars" />
+          </button>
+        </div>
       </header>
 
-      <main className="app-main">
-        {/* Sidebar desktop */}
-        <aside className="sidebar hide-on-mobile">
-          <div className="sidebar-card">
-            <h2 className="sidebar-title">Rugby Hot Game of the Week</h2>
-            <p className="sidebar-subtitle">
-              AI-powered weekly analysis of the most interesting rugby clashes.
-            </p>
+      <main className="app-shell">
+        {/* LEFT COLUMN */}
+        <aside className="sidebar">
+          <section className="sidebar-card">
+            <div className="sidebar-card-header">
+              <h2>Rugby Hot Game of the Week</h2>
+              <p>
+                AI-powered weekly analysis of the most interesting rugby
+                clashes.
+              </p>
+            </div>
 
+            {/* filtros */}
             <div className="filters-row">
-              <select
-                className="filter-select"
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
-              >
-                {ARTICLE_TYPES.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+              <div className="select-wrap">
+                <select
+                  className="filter-select"
+                  value={typeFilter}
+                  onChange={(e) => setTypeFilter(e.target.value)}
+                >
+                  <option value="ALL">All types</option>
+                  <option value="intro">Intro</option>
+                  <option value="roundup">Round-up</option>
+                  <option value="vlog">Vlog / Opinion</option>
+                </select>
+              </div>
 
-              <select
-                className="filter-select"
-                value={leagueFilter}
-                onChange={(e) => setLeagueFilter(e.target.value)}
-              >
-                {LEAGUES.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+              <div className="select-wrap">
+                <select
+                  className="filter-select"
+                  value={leagueFilter}
+                  onChange={(e) => setLeagueFilter(e.target.value)}
+                >
+                  <option value="ALL">All leagues</option>
+                  {
+                    // show only leagues that have data (if standings loaded)
+                    Object.keys(standingsByLeague).length > 0
+                      ? STANDINGS_LEAGUES.filter(lg => Array.isArray(standingsByLeague[lg.key]) && standingsByLeague[lg.key].length > 0)
+                          .map(lg => (
+                            <option key={lg.key} value={lg.key}>{lg.label}</option>
+                          ))
+                      : Object.entries(LEAGUE_TAGS).map(([key, label]) => (
+                          <option key={key} value={key}>{label}</option>
+                        ))
+                  }
+                </select>
+              </div>
             </div>
 
-            <div className="article-list">
-              {loadingArticles && (
-                <div className="article-list-placeholder">Loading articles…</div>
-              )}
-              {articlesError && (
-                <div className="article-list-error">{articlesError}</div>
-              )}
-              {!loadingArticles &&
-                !articlesError &&
-                filteredArticles.map((article) => (
-                  <ArticleListItem
+            {/* lista de artigos */}
+            <div className="articles-list">
+              {filteredArticles.map((article) => {
+                const leagueKey = getArticleLeague(article);
+                const leagueLabel =
+                  LEAGUE_TAGS[leagueKey] || leagueKey || "Other";
+
+                const typeTag = getArticleTypeTag(article);
+
+                return (
+                  <button
                     key={article.id}
-                    article={article}
-                    isActive={selectedArticleId === article.id}
+                    className={
+                      "article-list-item" +
+                      (article.id === selectedArticle?.id
+                        ? " article-list-item-active"
+                        : "")
+                    }
                     onClick={() => handleSelectArticle(article.id)}
-                  />
-                ))}
-              {!loadingArticles &&
-                !articlesError &&
-                filteredArticles.length === 0 && (
-                  <div className="article-list-placeholder">
-                    No articles found for this filter.
-                  </div>
-                )}
-            </div>
-          </div>
+                  >
+                    <div className="article-list-title">
+                      {article.title || "Untitled article"}
+                    </div>
+                    <div className="article-list-meta">
+                      <span className="tag tag-date">{formatDate(article.date)}</span>
 
+                      {typeTag !== "OTHER" && (
+                        <span className={`tag ${
+                          typeTag.toLowerCase().includes("vlog")
+                            ? "tag-type-vlog"
+                            : typeTag.toLowerCase().includes("round")
+                            ? "tag-type-roundup"
+                            : typeTag.toLowerCase().includes("intro")
+                            ? "tag-type-intro"
+                            : "tag-default"
+                        }`}>{typeTag}</span>
+                      )}
+
+                      {leagueLabel && leagueLabel !== "Other" && (
+                        <span className="tag tag-league">{leagueLabel}</span>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+
+              {filteredArticles.length === 0 && (
+                <div className="empty-state">No articles match this filter.</div>
+              )}
+            </div>
+          </section>
+
+          {/* standings widget */}
           <StandingsWidget
-            currentLeagueIndex={standingsLeagueIndex}
+            activeLeague={activeStandingsLeague}
+            standings={activeStandingsTable}
+            loading={standingsLoading}
+            error={standingsError}
+            season={season}
             onPrevLeague={handlePrevLeague}
             onNextLeague={handleNextLeague}
-            data={standingsData}
-            loading={loadingStandings}
-            error={standingsError}
-            onOpenFullStandings={() => setPage("standings")}
+            onOpenFull={handleOpenFullStandings}
           />
         </aside>
 
-        {/* Área principal à direita */}
-        <section className="article-section">
-          {page === "article" && selectedArticle && (
-            <article className="article-card">
-              <div className="article-card-header">
-                <div className="article-tags">
-                  {selectedArticle.type && (
-                    <Tag
-                      kind={`type-${(selectedArticle.type || "").toLowerCase()}`}
-                    >
-                      {getTypeLabel(selectedArticle.type)}
-                    </Tag>
-                  )}
-                  {getLeagueLabelFromArticle(selectedArticle) && (
-                    <Tag kind="league">
-                      {getLeagueLabelFromArticle(selectedArticle)}
-                    </Tag>
-                  )}
-                  {selectedArticle.createdAt && (
-                    <Tag kind="date">
-                      {formatDate(selectedArticle.createdAt)}
-                    </Tag>
-                  )}
-                </div>
-                <h1 className="article-title">{selectedArticle.title}</h1>
+        {/* Mobile overlay: shown when mobilePanelOpen is true */}
+        {mobilePanelOpen && (
+          <div className="mobile-overlay" onClick={closeMobilePanel}>
+            <div
+              className="mobile-panel"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <div className="mobile-panel-header">
+                <h2>Menu</h2>
+                <button className="icon-button" onClick={closeMobilePanel} aria-label="Close menu">×</button>
               </div>
+
+              <div className="mobile-filters">
+                <div style={{ flex: 1 }}>
+                  <button
+                    className="mobile-standings-link"
+                    onClick={() => {
+                      // open classification (full standings) for current active league
+                      handleOpenFullStandings();
+                      closeMobilePanel();
+                    }}
+                  >
+                    Classification
+                  </button>
+                </div>
+              </div>
+
+              <div style={{ marginTop: 6 }}>
+                <div className="articles-list">
+                  {filteredArticles.map((article) => (
+                    <button
+                      key={article.id}
+                      className={
+                        "article-list-item" +
+                        (article.id === selectedArticle?.id
+                          ? " article-list-item-active"
+                          : "")
+                      }
+                      onClick={() => {
+                        handleSelectArticle(article.id);
+                        closeMobilePanel();
+                      }}
+                    >
+                      <div className="article-list-title">{article.title}</div>
+                      <div className="article-list-meta">
+                        <span className="tag tag-date">{formatDate(article.date)}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* RIGHT COLUMN */}
+        <section className="main">
+          {fullStandings ? (
+            // render full standings view
+            <FullStandings
+              leagueLabel={fullStandings.label}
+              season={season}
+              rows={fullStandings.rows}
+              onClose={handleCloseFullStandings}
+              onPrev={handlePrevFull}
+              onNext={handleNextFull}
+            />
+          ) : selectedArticle ? (
+            <article className="article-card">
+              <div className="article-meta-row">
+                {selectedArticle.league && (
+                  <span className="tag tag-league">
+                    {LEAGUE_TAGS[getArticleLeague(selectedArticle)] ||
+                      selectedArticle.league}
+                  </span>
+                )}
+                {selectedArticle.type && (
+                  <span className={`tag ${
+                    getArticleTypeTag(selectedArticle).toLowerCase().includes("vlog")
+                      ? "tag-type-vlog"
+                      : getArticleTypeTag(selectedArticle).toLowerCase().includes("round")
+                      ? "tag-type-roundup"
+                      : getArticleTypeTag(selectedArticle).toLowerCase().includes("intro")
+                      ? "tag-type-intro"
+                      : "tag-default"
+                  }`}>
+                    {getArticleTypeTag(selectedArticle)}
+                  </span>
+                )}
+                <span className="tag tag-date">{formatDate(selectedArticle.date)}</span>
+              </div>
+              <h2 className="article-title">
+                {selectedArticle.title || "Untitled article"}
+              </h2>
               <div className="article-content">
-                <p>{selectedArticle.content}</p>
+                {selectedArticle.content
+                  ?.split("\n")
+                  .map((p, idx) =>
+                    p.trim().length ? (
+                      <p key={idx}>{p}</p>
+                    ) : (
+                      <p key={idx}>&nbsp;</p>
+                    )
+                  )}
               </div>
             </article>
-          )}
-
-          {page === "standings" && (
-            <StandingsFullPage
-              leagueIndex={standingsLeagueIndex}
-              data={standingsData}
-              loading={loadingStandings}
-              error={standingsError}
-              onBack={() => setPage("article")}
-            />
-          )}
-
-          {!selectedArticle && page === "article" && (
-            <div className="article-card">
-              <h2 className="article-title">No articles yet</h2>
-              <p className="article-content">
-                As soon as the AI generates some posts, they will appear here.
-              </p>
+          ) : (
+            <div className="empty-state main-empty">
+              No article selected yet.
             </div>
           )}
         </section>
       </main>
-
-      {/* Menu mobile (overlay) */}
-      {mobileMenuOpen && (
-        <div
-          className="mobile-overlay"
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          <div
-            className="mobile-panel"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="mobile-panel-header">
-              <h2>Articles</h2>
-              <button
-                type="button"
-                className="icon-button"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="mobile-filters">
-              <select
-                className="filter-select"
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
-              >
-                {ARTICLE_TYPES.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                className="filter-select"
-                value={leagueFilter}
-                onChange={(e) => setLeagueFilter(e.target.value)}
-              >
-                {LEAGUES.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="article-list mobile">
-              {filteredArticles.map((article) => (
-                <ArticleListItem
-                  key={article.id}
-                  article={article}
-                  isActive={selectedArticleId === article.id}
-                  onClick={() => handleSelectArticle(article.id)}
-                />
-              ))}
-            </div>
-
-            <button
-              type="button"
-              className="mobile-standings-link"
-              onClick={() => {
-                setPage("standings");
-                setMobileMenuOpen(false);
-              }}
-            >
-              View standings
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
+
+export default App;

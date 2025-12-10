@@ -1,0 +1,143 @@
+{
+	"get": "standings",
+	"parameters": {
+		"league": "31",
+		"season": "2022"
+	},
+	"errors": [],
+	"results": 1,
+	"response": [
+		[
+			{
+				"position": 1,
+				"stage": "CN Honra",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 255, "name": "Cascais", "logo": "https://media.api-sports.io/rugby/teams/255.png" },
+				"league": { "id": 31, "name": "CN Honra", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/31.png", "season": 2022 },
+				"country": { "id": 16, "name": "Portugal", "code": "PT", "flag": "https://media.api-sports.io/flags/pt.svg" },
+				"games": { "played": 18, "win": { "total": 15, "percentage": "83.33" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 3, "percentage": "16.67" } },
+				"goals": { "for": 477, "against": 339 },
+				"points": 66,
+				"form": "WWWWW",
+				"description": null
+			},
+			{
+				"position": 2,
+				"stage": "CN Honra",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 256, "name": "Direito", "logo": "https://media.api-sports.io/rugby/teams/256.png" },
+				"league": { "id": 31, "name": "CN Honra", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/31.png", "season": 2022 },
+				"country": { "id": 16, "name": "Portugal", "code": "PT", "flag": "https://media.api-sports.io/flags/pt.svg" },
+				"games": { "played": 18, "win": { "total": 13, "percentage": "72.22" }, "draw": { "total": 1, "percentage": "5.56" }, "lose": { "total": 4, "percentage": "22.22" } },
+				"goals": { "for": 553, "against": 263 },
+				"points": 63,
+				"form": "WWWLL",
+				"description": null
+			},
+			{
+				"position": 3,
+				"stage": "CN Honra",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 251, "name": "Belenenses", "logo": "https://media.api-sports.io/rugby/teams/251.png" },
+				"league": { "id": 31, "name": "CN Honra", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/31.png", "season": 2022 },
+				"country": { "id": 16, "name": "Portugal", "code": "PT", "flag": "https://media.api-sports.io/flags/pt.svg" },
+				"games": { "played": 18, "win": { "total": 13, "percentage": "72.22" }, "draw": { "total": 1, "percentage": "5.56" }, "lose": { "total": 4, "percentage": "22.22" } },
+				"goals": { "for": 555, "against": 254 },
+				"points": 62,
+				"form": "WWLWL",
+				"description": null
+			},
+			{
+				"position": 4,
+				"stage": "CN Honra",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 250, "name": "Agronomia", "logo": "https://media.api-sports.io/rugby/teams/250.png" },
+				"league": { "id": 31, "name": "CN Honra", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/31.png", "season": 2022 },
+				"country": { "id": 16, "name": "Portugal", "code": "PT", "flag": "https://media.api-sports.io/flags/pt.svg" },
+				"games": { "played": 18, "win": { "total": 12, "percentage": "66.67" }, "draw": { "total": 1, "percentage": "5.56" }, "lose": { "total": 5, "percentage": "27.78" } },
+				"goals": { "for": 448, "against": 277 },
+				"points": 58,
+				"form": "LLLWL",
+				"description": null
+			},
+			{
+				"position": 5,
+				"stage": "CN Honra",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 253, "name": "CDUL", "logo": "https://media.api-sports.io/rugby/teams/253.png" },
+				"league": { "id": 31, "name": "CN Honra", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/31.png", "season": 2022 },
+				"country": { "id": 16, "name": "Portugal", "code": "PT", "flag": "https://media.api-sports.io/flags/pt.svg" },
+				"games": { "played": 18, "win": { "total": 9, "percentage": "50.00" }, "draw": { "total": 1, "percentage": "5.56" }, "lose": { "total": 8, "percentage": "44.44" } },
+				"goals": { "for": 559, "against": 325 },
+				"points": 51,
+				"form": "WLLWL",
+				"description": null
+			},
+			{
+				"position": 6,
+				"stage": "CN Honra",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 252, "name": "Benfica", "logo": "https://media.api-sports.io/rugby/teams/252.png" },
+				"league": { "id": 31, "name": "CN Honra", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/31.png", "season": 2022 },
+				"country": { "id": 16, "name": "Portugal", "code": "PT", "flag": "https://media.api-sports.io/flags/pt.svg" },
+				"games": { "played": 18, "win": { "total": 10, "percentage": "55.56" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 8, "percentage": "44.44" } },
+				"goals": { "for": 486, "against": 329 },
+				"points": 48,
+				"form": "WLWWW",
+				"description": null
+			},
+			{
+				"position": 7,
+				"stage": "CN Honra",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 107, "name": "Lousa", "logo": "https://media.api-sports.io/rugby/teams/107.png" },
+				"league": { "id": 31, "name": "CN Honra", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/31.png", "season": 2022 },
+				"country": { "id": 16, "name": "Portugal", "code": "PT", "flag": "https://media.api-sports.io/flags/pt.svg" },
+				"games": { "played": 18, "win": { "total": 4, "percentage": "22.22" }, "draw": { "total": 2, "percentage": "11.11" }, "lose": { "total": 12, "percentage": "66.67" } },
+				"goals": { "for": 332, "against": 655 },
+				"points": 21,
+				"form": "LWLLW",
+				"description": null
+			},
+			{
+				"position": 8,
+				"stage": "CN Honra",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 258, "name": "Sao Miguel", "logo": "https://media.api-sports.io/rugby/teams/258.png" },
+				"league": { "id": 31, "name": "CN Honra", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/31.png", "season": 2022 },
+				"country": { "id": 16, "name": "Portugal", "code": "PT", "flag": "https://media.api-sports.io/flags/pt.svg" },
+				"games": { "played": 18, "win": { "total": 4, "percentage": "22.22" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 14, "percentage": "77.78" } },
+				"goals": { "for": 303, "against": 587 },
+				"points": 20,
+				"form": "LLLLW",
+				"description": null
+			},
+			{
+				"position": 9,
+				"stage": "CN Honra",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 254, "name": "CDUP", "logo": "https://media.api-sports.io/rugby/teams/254.png" },
+				"league": { "id": 31, "name": "CN Honra", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/31.png", "season": 2022 },
+				"country": { "id": 16, "name": "Portugal", "code": "PT", "flag": "https://media.api-sports.io/flags/pt.svg" },
+				"games": { "played": 18, "win": { "total": 4, "percentage": "22.22" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 14, "percentage": "77.78" } },
+				"goals": { "for": 288, "against": 723 },
+				"points": 18,
+				"form": "LLWLL",
+				"description": null
+			},
+			{
+				"position": 10,
+				"stage": "CN Honra",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 249, "name": "AA Coimbra", "logo": "https://media.api-sports.io/rugby/teams/249.png" },
+				"league": { "id": 31, "name": "CN Honra", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/31.png", "season": 2022 },
+				"country": { "id": 16, "name": "Portugal", "code": "PT", "flag": "https://media.api-sports.io/flags/pt.svg" },
+				"games": { "played": 18, "win": { "total": 3, "percentage": "16.67" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 15, "percentage": "83.33" } },
+				"goals": { "for": 335, "against": 584 },
+				"points": 16,
+				"form": "LWWLL",
+				"description": null
+			}
+		]
+	]
+}

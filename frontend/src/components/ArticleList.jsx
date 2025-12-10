@@ -27,22 +27,34 @@ export function ArticleList({ articles, selectedId, onSelect }) {
           key={article.id}
           className={
             "article-list-item" +
-            (article.id === selectedId ? " article-list-item--active" : "")
+            (article.id === selectedId ? " article-list-item-active" : "")
           }
           onClick={() => onSelect(article)}
         >
-          <div className="article-list-title">{article.title}</div>
+          <div className="article-list-item-inner">
+            <div className="article-list-item-title">{article.title}</div>
 
-          <div className="article-list-meta">
-            {article.date && (
-              <span className="pill pill--date">{formatDate(article.date)}</span>
-            )}
-            {article.type && (
-              <span className="pill pill--type">{article.type}</span>
-            )}
-            {article.league && (
-              <span className="pill pill--league">{article.league}</span>
-            )}
+            <div className="article-list-item-meta">
+              {article.date && (
+                <span className="tag tag-date">{formatDate(article.date)}</span>
+              )}
+
+              {article.type && (
+                <span className={`tag ${
+                  article.type === "vlog"
+                    ? "tag-type-vlog"
+                    : article.type === "roundup"
+                    ? "tag-type-roundup"
+                    : article.type === "intro"
+                    ? "tag-type-intro"
+                    : "tag-default"
+                }`}>{article.type}</span>
+              )}
+
+              {article.league && (
+                <span className="tag tag-league">{article.league}</span>
+              )}
+            </div>
           </div>
         </li>
       ))}

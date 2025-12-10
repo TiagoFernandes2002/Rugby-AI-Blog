@@ -1,0 +1,182 @@
+{
+        "get": "standings",
+        "parameters": {
+                "league": "13",
+                "season": "2022"
+        },
+        "errors": [],
+        "results": 1,
+        "response": [
+                [
+                        {
+                                "position": 1,
+                                "stage": "Premiership Rugby",
+                                "group": { "name": "Regular Season" },
+                                "team": { "id": 67, "name": "Saracens", "logo": "https://media.api-sports.io/rugby/teams/67.png" },
+                                "league": { "id": 13, "name": "Premiership Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/13.png", "season": 2022 },
+                                "country": { "id": 6, "name": "England", "code": "GB", "flag": "https://media.api-sports.io/flags/gb.svg" },
+                                "games": { "played": 19, "win": { "total": 15, "percentage": "78.95" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 4, "percentage": "21.05" } },
+                                "goals": { "for": 593, "against": 452 },
+                                "points": 73,
+                                "form": "WLWLW",
+                                "description": null
+                        },
+                        {
+                                "position": 2,
+                                "stage": "Premiership Rugby",
+                                "group": { "name": "Regular Season" },
+                                "team": { "id": 66, "name": "Sale Sharks", "logo": "https://media.api-sports.io/rugby/teams/66.png" },
+                                "league": { "id": 13, "name": "Premiership Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/13.png", "season": 2022 },
+                                "country": { "id": 6, "name": "England", "code": "GB", "flag": "https://media.api-sports.io/flags/gb.svg" },
+                                "games": { "played": 19, "win": { "total": 13, "percentage": "68.42" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 6, "percentage": "31.58" } },
+                                "goals": { "for": 522, "against": 423 },
+                                "points": 64,
+                                "form": "WWLWL",
+                                "description": null
+                        },
+                        {
+                                "position": 3,
+                                "stage": "Premiership Rugby",
+                                "group": { "name": "Regular Season" },
+                                "team": { "id": 63, "name": "Leicester Tigers", "logo": "https://media.api-sports.io/rugby/teams/63.png" },
+                                "league": { "id": 13, "name": "Premiership Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/13.png", "season": 2022 },
+                                "country": { "id": 6, "name": "England", "code": "GB", "flag": "https://media.api-sports.io/flags/gb.svg" },
+                                "games": { "played": 19, "win": { "total": 11, "percentage": "57.89" }, "draw": { "total": 1, "percentage": "5.26" }, "lose": { "total": 7, "percentage": "36.84" } },
+                                "goals": { "for": 543, "against": 470 },
+                                "points": 58,
+                                "form": "WWWWW",
+                                "description": null
+                        },
+                        {
+                                "position": 4,
+                                "stage": "Premiership Rugby",
+                                "group": { "name": "Regular Season" },
+                                "team": { "id": 65, "name": "Northampton Saints", "logo": "https://media.api-sports.io/rugby/teams/65.png" },
+                                "league": { "id": 13, "name": "Premiership Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/13.png", "season": 2022 },
+                                "country": { "id": 6, "name": "England", "code": "GB", "flag": "https://media.api-sports.io/flags/gb.svg" },
+                                "games": { "played": 20, "win": { "total": 11, "percentage": "55.00" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 9, "percentage": "45.00" } },
+                                "goals": { "for": 620, "against": 611 },
+                                "points": 58,
+                                "form": "WWLWL",
+                                "description": null
+                        },
+                        {
+                                "position": 5,
+                                "stage": "Premiership Rugby",
+                                "group": { "name": "Regular Season" },
+                                "team": { "id": 64, "name": "London Irish", "logo": "https://media.api-sports.io/rugby/teams/64.png" },
+                                "league": { "id": 13, "name": "Premiership Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/13.png", "season": 2022 },
+                                "country": { "id": 6, "name": "England", "code": "GB", "flag": "https://media.api-sports.io/flags/gb.svg" },
+                                "games": { "played": 19, "win": { "total": 9, "percentage": "47.37" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 10, "percentage": "52.63" } },
+                                "goals": { "for": 526, "against": 471 },
+                                "points": 51,
+                                "form": "LWWWL",
+                                "description": "Promotion - European Rugby Champions Cup"
+                        },
+                        {
+                                "position": 6,
+                                "stage": "Premiership Rugby",
+                                "group": { "name": "Regular Season" },
+                                "team": { "id": 60, "name": "Exeter Chiefs", "logo": "https://media.api-sports.io/rugby/teams/60.png" },
+                                "league": { "id": 13, "name": "Premiership Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/13.png", "season": 2022 },
+                                "country": { "id": 6, "name": "England", "code": "GB", "flag": "https://media.api-sports.io/flags/gb.svg" },
+                                "games": { "played": 19, "win": { "total": 10, "percentage": "52.63" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 9, "percentage": "47.37" } },
+                                "goals": { "for": 436, "against": 496 },
+                                "points": 47,
+                                "form": "WLLWL",
+                                "description": "Promotion - European Rugby Champions Cup"
+                        },
+                        {
+                                "position": 7,
+                                "stage": "Premiership Rugby",
+                                "group": { "name": "Regular Season" },
+                                "team": { "id": 62, "name": "Harlequins", "logo": "https://media.api-sports.io/rugby/teams/62.png" },
+                                "league": { "id": 13, "name": "Premiership Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/13.png", "season": 2022 },
+                                "country": { "id": 6, "name": "England", "code": "GB", "flag": "https://media.api-sports.io/flags/gb.svg" },
+                                "games": { "played": 19, "win": { "total": 8, "percentage": "42.11" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 11, "percentage": "57.89" } },
+                                "goals": { "for": 526, "against": 534 },
+                                "points": 47,
+                                "form": "LWLLW",
+                                "description": "Promotion - European Rugby Champions Cup"
+                        },
+                        {
+                                "position": 8,
+                                "stage": "Premiership Rugby",
+                                "group": { "name": "Regular Season" },
+                                "team": { "id": 59, "name": "Bristol", "logo": "https://media.api-sports.io/rugby/teams/59.png" },
+                                "league": { "id": 13, "name": "Premiership Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/13.png", "season": 2022 },
+                                "country": { "id": 6, "name": "England", "code": "GB", "flag": "https://media.api-sports.io/flags/gb.svg" },
+                                "games": { "played": 19, "win": { "total": 7, "percentage": "36.84" }, "draw": { "total": 1, "percentage": "5.26" }, "lose": { "total": 11, "percentage": "57.89" } },
+                                "goals": { "for": 479, "against": 515 },
+                                "points": 42,
+                                "form": "LLLWW",
+                                "description": "Promotion - European Rugby Champions Cup"
+                        },
+                        {
+                                "position": 9,
+                                "stage": "Premiership Rugby",
+                                "group": { "name": "Regular Season" },
+                                "team": { "id": 58, "name": "Bath", "logo": "https://media.api-sports.io/rugby/teams/58.png" },
+                                "league": { "id": 13, "name": "Premiership Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/13.png", "season": 2022 },
+                                "country": { "id": 6, "name": "England", "code": "GB", "flag": "https://media.api-sports.io/flags/gb.svg" },
+                                "games": { "played": 19, "win": { "total": 7, "percentage": "36.84" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 12, "percentage": "63.16" } },
+                                "goals": { "for": 467, "against": 511 },
+                                "points": 42,
+                                "form": "WWWLL",
+                                "description": null
+                        },
+                        {
+                                "position": 10,
+                                "stage": "Premiership Rugby",
+                                "group": { "name": "Regular Season" },
+                                "team": { "id": 61, "name": "Gloucester", "logo": "https://media.api-sports.io/rugby/teams/61.png" },
+                                "league": { "id": 13, "name": "Premiership Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/13.png", "season": 2022 },
+                                "country": { "id": 6, "name": "England", "code": "GB", "flag": "https://media.api-sports.io/flags/gb.svg" },
+                                "games": { "played": 19, "win": { "total": 7, "percentage": "36.84" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 12, "percentage": "63.16" } },
+                                "goals": { "for": 414, "against": 468 },
+                                "points": 41,
+                                "form": "LLLLL",
+                                "description": null
+                        },
+                        {
+                                "position": 11,
+                                "stage": "Premiership Rugby",
+                                "group": { "name": "Regular Season" },
+                                "team": { "id": 81, "name": "Newcastle Falcons", "logo": "https://media.api-sports.io/rugby/teams/81.png" },
+                                "league": { "id": 13, "name": "Premiership Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/13.png", "season": 2022 },
+                                "country": { "id": 6, "name": "England", "code": "GB", "flag": "https://media.api-sports.io/flags/gb.svg" },
+                                "games": { "played": 19, "win": { "total": 6, "percentage": "31.58" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 13, "percentage": "68.42" } },
+                                "goals": { "for": 387, "against": 562 },
+                                "points": 31,
+                                "form": "LLWLL",
+                                "description": null
+                        },
+                        {
+                                "position": 12,
+                                "stage": "Premiership Rugby",
+                                "group": { "name": "Regular Season" },
+                                "team": { "id": 68, "name": "Wasps", "logo": "https://media.api-sports.io/rugby/teams/68.png" },
+                                "league": { "id": 13, "name": "Premiership Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/13.png", "season": 2022 },
+                                "country": { "id": 6, "name": "England", "code": "GB", "flag": "https://media.api-sports.io/flags/gb.svg" },
+                                "games": { "played": 0, "win": { "total": 0, "percentage": "0.00" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 0, "percentage": "0.00" } },
+                                "goals": { "for": 0, "against": 0 },
+                                "points": 0,
+                                "form": null,
+                                "description": null
+                        },
+                        {
+                                "position": 13,
+                                "stage": "Premiership Rugby",
+                                "group": { "name": "Regular Season" },
+                                "team": { "id": 69, "name": "Worcester Warriors", "logo": "https://media.api-sports.io/rugby/teams/69.png" },
+                                "league": { "id": 13, "name": "Premiership Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/13.png", "season": 2022 },
+                                "country": { "id": 6, "name": "England", "code": "GB", "flag": "https://media.api-sports.io/flags/gb.svg" },
+                                "games": { "played": 0, "win": { "total": 0, "percentage": "0.00" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 0, "percentage": "0.00" } },
+                                "goals": { "for": 0, "against": 0 },
+                                "points": 0,
+                                "form": null,
+                                "description": null
+                        }
+                ]
+        ]
+}

@@ -1,0 +1,169 @@
+{
+	"get": "standings",
+	"parameters": {
+		"league": "71",
+		"season": "2022"
+	},
+	"errors": [],
+	"results": 1,
+	"response": [
+		[
+			{
+				"position": 1,
+				"stage": "Super Rugby",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 478, "name": "Brumbies", "logo": "https://media.api-sports.io/rugby/teams/478.png" },
+				"league": { "id": 71, "name": "Super Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/71.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 0, "win": { "total": 0, "percentage": "0.00" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 0, "percentage": "0.00" } },
+				"goals": { "for": 0, "against": 0 },
+				"points": 0,
+				"form": null,
+				"description": "Promotion - Super Rugby (Play Offs)"
+			},
+			{
+				"position": 2,
+				"stage": "Super Rugby",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 483, "name": "Waratahs", "logo": "https://media.api-sports.io/rugby/teams/483.png" },
+				"league": { "id": 71, "name": "Super Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/71.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 0, "win": { "total": 0, "percentage": "0.00" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 0, "percentage": "0.00" } },
+				"goals": { "for": 0, "against": 0 },
+				"points": 0,
+				"form": null,
+				"description": "Promotion - Super Rugby (Play Offs)"
+			},
+			{
+				"position": 3,
+				"stage": "Super Rugby",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 482, "name": "Reds", "logo": "https://media.api-sports.io/rugby/teams/482.png" },
+				"league": { "id": 71, "name": "Super Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/71.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 0, "win": { "total": 0, "percentage": "0.00" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 0, "percentage": "0.00" } },
+				"goals": { "for": 0, "against": 0 },
+				"points": 0,
+				"form": null,
+				"description": "Promotion - Super Rugby (Play Offs)"
+			},
+			{
+				"position": 4,
+				"stage": "Super Rugby",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 33, "name": "Western Force", "logo": "https://media.api-sports.io/rugby/teams/33.png" },
+				"league": { "id": 71, "name": "Super Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/71.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 0, "win": { "total": 0, "percentage": "0.00" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 0, "percentage": "0.00" } },
+				"goals": { "for": 0, "against": 0 },
+				"points": 0,
+				"form": null,
+				"description": "Promotion - Super Rugby (Play Offs)"
+			},
+			{
+				"position": 5,
+				"stage": "Super Rugby",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 46, "name": "Blues", "logo": "https://media.api-sports.io/rugby/teams/46.png" },
+				"league": { "id": 71, "name": "Super Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/71.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 0, "win": { "total": 0, "percentage": "0.00" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 0, "percentage": "0.00" } },
+				"goals": { "for": 0, "against": 0 },
+				"points": 0,
+				"form": null,
+				"description": "Promotion - Super Rugby (Play Offs)"
+			},
+			{
+				"position": 6,
+				"stage": "Super Rugby",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 296, "name": "Chiefs", "logo": "https://media.api-sports.io/rugby/teams/296.png" },
+				"league": { "id": 71, "name": "Super Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/71.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 0, "win": { "total": 0, "percentage": "0.00" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 0, "percentage": "0.00" } },
+				"goals": { "for": 0, "against": 0 },
+				"points": 0,
+				"form": null,
+				"description": "Promotion - Super Rugby (Play Offs)"
+			},
+			{
+				"position": 7,
+				"stage": "Super Rugby",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 479, "name": "Crusaders", "logo": "https://media.api-sports.io/rugby/teams/479.png" },
+				"league": { "id": 71, "name": "Super Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/71.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 0, "win": { "total": 0, "percentage": "0.00" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 0, "percentage": "0.00" } },
+				"goals": { "for": 0, "against": 0 },
+				"points": 0,
+				"form": null,
+				"description": "Promotion - Super Rugby (Play Offs)"
+			},
+			{
+				"position": 8,
+				"stage": "Super Rugby",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 480, "name": "Highlanders", "logo": "https://media.api-sports.io/rugby/teams/480.png" },
+				"league": { "id": 71, "name": "Super Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/71.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 0, "win": { "total": 0, "percentage": "0.00" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 0, "percentage": "0.00" } },
+				"goals": { "for": 0, "against": 0 },
+				"points": 0,
+				"form": null,
+				"description": "Promotion - Super Rugby (Play Offs)"
+			},
+			{
+				"position": 9,
+				"stage": "Super Rugby",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 201, "name": "Hurricanes", "logo": "https://media.api-sports.io/rugby/teams/201.png" },
+				"league": { "id": 71, "name": "Super Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/71.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 0, "win": { "total": 0, "percentage": "0.00" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 0, "percentage": "0.00" } },
+				"goals": { "for": 0, "against": 0 },
+				"points": 0,
+				"form": null,
+				"description": null
+			},
+			{
+				"position": 10,
+				"stage": "Super Rugby",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 481, "name": "Rebels", "logo": "https://media.api-sports.io/rugby/teams/481.png" },
+				"league": { "id": 71, "name": "Super Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/71.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 0, "win": { "total": 0, "percentage": "0.00" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 0, "percentage": "0.00" } },
+				"goals": { "for": 0, "against": 0 },
+				"points": 0,
+				"form": null,
+				"description": null
+			},
+			{
+				"position": 11,
+				"stage": "Super Rugby",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 28, "name": "Fijian Drua", "logo": "https://media.api-sports.io/rugby/teams/28.png" },
+				"league": { "id": 71, "name": "Super Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/71.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 0, "win": { "total": 0, "percentage": "0.00" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 0, "percentage": "0.00" } },
+				"goals": { "for": 0, "against": 0 },
+				"points": 0,
+				"form": null,
+				"description": null
+			},
+			{
+				"position": 12,
+				"stage": "Super Rugby",
+				"group": { "name": "Regular Season" },
+				"team": { "id": 618, "name": "Moana Pasifika", "logo": "https://media.api-sports.io/rugby/teams/618.png" },
+				"league": { "id": 71, "name": "Super Rugby", "type": "League", "logo": "https://media.api-sports.io/rugby/leagues/71.png", "season": 2022 },
+				"country": { "id": 26, "name": "World", "code": null, "flag": null },
+				"games": { "played": 0, "win": { "total": 0, "percentage": "0.00" }, "draw": { "total": 0, "percentage": "0.00" }, "lose": { "total": 0, "percentage": "0.00" } },
+				"goals": { "for": 0, "against": 0 },
+				"points": 0,
+				"form": null,
+				"description": null
+			}
+		]
+	]
+}

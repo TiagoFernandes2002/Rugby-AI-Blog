@@ -21,15 +21,21 @@ export function ArticleDetail({ article }) {
       <header className="article-header">
         <div className="article-tags-row">
           {article.league && (
-            <span className="pill pill--league">{article.league}</span>
+            <span className="tag tag-league">{article.league}</span>
           )}
           {article.type && (
-            <span className="pill pill--type">{article.type}</span>
+            <span className={`tag ${
+              article.type === "vlog"
+                ? "tag-type-vlog"
+                : article.type === "roundup"
+                ? "tag-type-roundup"
+                : article.type === "intro"
+                ? "tag-type-intro"
+                : "tag-default"
+            }`}>{article.type}</span>
           )}
           {article.date && (
-            <span className="pill pill--date">
-              {formatDate(article.date)}
-            </span>
+            <span className="tag tag-date">{formatDate(article.date)}</span>
           )}
         </div>
         <h2 className="article-title">{article.title}</h2>

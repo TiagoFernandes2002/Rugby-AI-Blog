@@ -27,14 +27,17 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
   background: radial-gradient(circle at top, #17233b 0, #050b16 55%);
   color: var(--text-main);
+  overflow-x: hidden;
 }
 
 /* Root container */
 
 .app-root {
   min-height: 100vh;
-  padding: 1.5rem 1.75rem 2rem;
-  max-width: 1440px;
+  padding: 1rem 1rem 1.25rem;
+  /* Use 90% of the viewport width and center it (5% gutters each side) */
+  width: 99vw;
+  max-width: 2800px; /* safety cap for very wide monitors */
   margin: 0 auto;
 }
 
@@ -67,20 +70,54 @@ body {
 
 /* Layout principal */
 
-.app-main {
-  display: flex;
-  align-items: flex-start;
+.app-shell {
+  display: grid;
+  /* narrower sidebar gives the article more room and reduces right gap */
+  grid-template-columns: 350px 1fr;
   gap: 1.5rem;
   margin-top: 1.5rem;
+  min-height: calc(100vh - 200px);
+  /* fill the app-root width so the two-column layout sits centered */
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0; /* app-root handles centering */
+  margin-right: 0;
+}
+
+/* Prevent accidental horizontal overflow between the two columns */
+.app-shell,
+.sidebar,
+.main {
+  overflow-x: hidden;
 }
 
 .sidebar {
-  width: min(360px, 100%);
-  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  /* Let children manage their own scrolling so the column itself doesn't scroll */
+  max-height: none;
+  overflow-y: visible;
+  overflow-x: hidden; /* ensure no horizontal scrollbar inside sidebar */
+  padding-right: 0.5rem;
 }
 
-.article-section {
-  flex: 1;
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #293244;
+  border-radius: 999px;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
 }
 
@@ -93,6 +130,12 @@ body {
   padding: 1.25rem 1.25rem 1.1rem;
   border: 1px solid var(--border-soft);
   box-shadow: var(--shadow-soft);
+  /* allow flex children to shrink below their content size */
+  min-height: 0;
+  /* don't force expansion in the flex column */
+  flex: 0 1 auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar-card + .standings-card {
@@ -113,20 +156,34 @@ body {
 
 /* Filtros */
 
-.filters-row {
+ .filters-row {
   display: flex;
   gap: 0.5rem;
   margin-bottom: 0.75rem;
+  flex-wrap: nowrap; /* keep selects side-by-side */
+  align-items: center;
+}
+/* allow flex children to shrink and avoid forcing horizontal overflow */
+.filters-row,
+.select-wrap,
+.article-list,
+.sidebar-card,
+.standings-card {
+  min-width: 0;
 }
 
 .filter-select {
-  flex: 1;
-  padding: 0.45rem 0.8rem;
+  flex: 1 1 0;
+  /* consistent height and centered content */
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.9rem;
   border-radius: 999px;
   border: 1px solid var(--border-soft);
   background: #091222;
   color: var(--text-main);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   outline: none;
 }
 
@@ -135,18 +192,141 @@ body {
   box-shadow: 0 0 0 1px rgba(53, 201, 255, 0.3);
 }
 
+/* make filters more visual: larger pill-like selects and subtle gradient */
+.filters-row .filter-select {
+  background: linear-gradient(180deg, rgba(9,18,34,0.9), rgba(7,13,25,0.85));
+  border: 1px solid rgba(53, 201, 255, 0.08);
+  padding: 0.5rem 0.95rem;
+  font-weight: 600;
+  color: var(--text-main);
+  box-shadow: 0 6px 18px rgba(3, 8, 14, 0.6);
+}
+
+/* wrap a select so we can draw a chevron on the right */
+.select-wrap {
+  position: relative;
+  flex: 1;
+}
+
+/* Ensure filters are visually contained inside the sidebar card */
+.sidebar-card {
+  /* create a stacking/containing context so children don't paint outside the rounded card */
+  overflow: hidden;
+}
+
+.sidebar-card .filters-row {
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 0.25rem; /* keep chevron away from card edge */
+}
+
+.sidebar-card .select-wrap {
+  min-width: 0; /* allow flex children to shrink within the card */
+  max-width: 100%;
+}
+
+.sidebar-card .filter-select {
+  width: 100%;
+  box-sizing: border-box;
+}
+.select-wrap::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid var(--text-main);
+  border-bottom: 2px solid var(--text-main);
+  opacity: 0.7;
+  pointer-events: none;
+}
+.select-wrap .filter-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding-right: 2.6rem; /* room for chevron */
+}
+
+.select-wrap:focus-within::after {
+  border-color: var(--accent);
+  opacity: 1;
+}
+
+/* Improve dropdown option contrast across browsers */
+.filter-select {
+  color: var(--text-main);
+  background-color: rgba(5, 11, 22, 0.85);
+}
+
+/* Try to style native options — supported in Chromium/Firefox/Edge */
+.filter-select option {
+  color: var(--text-main);
+  background-color: var(--bg-card);
+}
+
+/* optgroup headings slightly muted */
+.filter-select optgroup {
+  color: var(--text-muted);
+  background-color: var(--bg-card);
+}
+
+/* hide MS native expand icon (we draw our own) */
+.filter-select::-ms-expand {
+  display: none;
+}
+
+/* for WebKit, ensure the text fills properly */
+.filter-select:-webkit-autofill,
+.filter-select::-webkit-textfield-decoration-container {
+  -webkit-text-fill-color: var(--text-main) !important;
+}
+
+/* visual pill buttons for mobile or quick filters (if used) */
+.filter-pills {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+.filter-pill {
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.03);
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+.filter-pill--active {
+  background: var(--accent);
+  color: #03101b;
+}
+
 /* Lista de artigos */
 
-.article-list {
-  max-height: 360px;
+ .article-list {
+  flex: 0 1 auto;
   overflow-y: auto;
+  overflow-x: hidden; /* prevent horizontal scroll inside the list */
   padding-right: 0.15rem;
+  /* constrain article list height so it scrolls internally rather than making the sidebar scroll */
+  max-height: 280px !important;
+  min-height: 0;
+  height: auto;
 }
 
-.article-list.mobile {
-  max-height: none;
+/* Also support the plural class name used in JSX */
+.articles-list {
+  flex: 0 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.15rem;
+  max-height: 380px !important;
+  min-height: 0;
+  height: auto;
 }
-
 .article-list::-webkit-scrollbar {
   width: 6px;
 }
@@ -185,27 +365,109 @@ body {
     transform var(--transition-fast);
 }
 
+
+.article-list-item {
+  display: block;
+  background: linear-gradient(180deg, rgba(11,20,37,0.35), rgba(6,12,22,0.25));
+  border: 1px solid rgba(255,255,255,0.02);
+  padding: 0.75rem;
+  box-shadow: 0 6px 18px rgba(2,6,12,0.55);
+}
+
 .article-list-item:hover {
-  background: rgba(15, 104, 255, 0.1);
-  border-color: rgba(53, 201, 255, 0.2);
+  background: linear-gradient(180deg, rgba(11,25,50,0.45), rgba(7,15,30,0.35));
+  border-color: rgba(53, 201, 255, 0.12);
+  transform: translateY(-3px);
 }
 
 .article-list-item-active {
-  background: var(--accent-soft);
-  border-color: var(--accent);
-  transform: translateY(-1px);
+  background: linear-gradient(180deg, rgba(5,24,44,0.6), rgba(6,12,22,0.45));
+  border: 1px solid rgba(53, 201, 255, 0.22);
+  box-shadow: 0 18px 36px rgba(3, 8, 14, 0.65);
+  transform: translateY(-3px);
+}
+
+.article-list-item-inner {
+  display: flex;
+  flex-direction: column;
 }
 
 .article-list-item-title {
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--text-main);
 }
 
 .article-list-item-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem;
-  margin-top: 0.28rem;
+  gap: 0.4rem;
+  margin-top: 0.45rem;
+}
+
+/* tags (used in lists and article header) */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.18rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0.03em;
+  border: 1px solid rgba(255,255,255,0.02);
+}
+
+.tag-default {
+  background: rgba(255,255,255,0.02);
+  color: var(--text-muted);
+}
+
+.tag-date {
+  border-color: rgba(255,255,255,0.06);
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.02);
+}
+
+.tag-league {
+  border-color: rgba(53, 201, 255, 0.15);
+  color: var(--accent);
+  background: rgba(53, 201, 255, 0.06);
+}
+
+/* make league tags uppercase and a bit more prominent like the screenshot */
+.tag-league {
+  text-transform: uppercase;
+  font-weight: 800;
+  padding: 0.18rem 0.65rem;
+  letter-spacing: 0.04em;
+}
+
+/* season tag */
+.tag-season {
+  border-color: rgba(255,255,255,0.06);
+  color: var(--text-main);
+  background: rgba(255,255,255,0.03);
+  font-weight: 700;
+}
+
+.tag-type-intro {
+  border-color: #a88cff22;
+  color: #e0d4ff;
+  background: rgba(168, 140, 255, 0.06);
+}
+
+.tag-type-vlog {
+  border-color: #ff7ab522;
+  color: #ffd2e9;
+  background: rgba(255, 122, 181, 0.06);
+}
+
+.tag-type-roundup {
+  border-color: #8be27f22;
+  color: #d4ffd0;
+  background: rgba(139, 226, 127, 0.06);
 }
 
 /* Tags */
@@ -259,18 +521,30 @@ body {
   padding: 1.5rem 1.7rem 1.6rem;
   border: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: var(--shadow-soft);
-  min-height: 360px;
+  /* fit content height instead of expanding; don't force flex:1 growth */
+  flex: 0 1 auto;
+  overflow-y: auto;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  height: auto;
+}
+
+/* Full standings should also fill its column and scale with the container */
+.full-standings {
+  width: 100%;
+  max-width: 100%;
 }
 
 .article-card-header {
   margin-bottom: 0.9rem;
 }
 
-.article-tags {
+.article-meta-row {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.8rem;
 }
 
 .article-title {
@@ -292,6 +566,8 @@ body {
 .standings-card {
   margin-top: 1rem;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
 }
 
 .standings-header {
@@ -375,22 +651,26 @@ body {
 .icon-button {
   border: none;
   outline: none;
-  background: rgba(255, 255, 255, 0.06);
+  background: transparent; /* remove circular ball */
   color: var(--text-main);
-  border-radius: 999px;
-  width: 32px;
-  height: 32px;
+  border-radius: 4px;
+  padding: 6px; /* keep clickable area without visible circle */
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background var(--transition-fast), transform var(--transition-fast);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
   font-size: 0.95rem;
 }
 
 .icon-button:hover {
-  background: rgba(255, 255, 255, 0.14);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+}
+
+/* subtle focus/hover background only behind the bars (not a full circle) */
+.icon-button:focus-visible,
+.icon-button:hover {
+  box-shadow: 0 6px 18px rgba(3, 8, 14, 0.6), 0 0 10px rgba(53,201,255,0.06) inset;
 }
 
 /* hamburguer */
@@ -400,6 +680,10 @@ body {
   width: 14px;
   height: 2px;
   background: transparent;
+}
+
+.icon-bars {
+  transition: all var(--transition-fast);
 }
 
 .icon-bars::before,
@@ -413,12 +697,28 @@ body {
   background: var(--text-main);
 }
 
+.icon-bars::before,
+.icon-bars::after {
+  transition: all var(--transition-fast);
+}
+
 .icon-bars::before {
   top: -4px;
 }
 
 .icon-bars::after {
   top: 4px;
+}
+
+/* Hover animation for hamburger icon */
+.icon-button:hover .icon-bars::before {
+  top: -6px;
+  box-shadow: 0 0 6px rgba(53, 201, 255, 0.4);
+}
+
+.icon-button:hover .icon-bars::after {
+  top: 6px;
+  box-shadow: 0 0 6px rgba(53, 201, 255, 0.4);
 }
 
 /* Back link na página de standings */
@@ -442,7 +742,8 @@ body {
 .mobile-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(2, 5, 12, 0.7);
+  background: rgba(2, 5, 12, 0.8);
+  backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
   align-items: flex-end;
@@ -452,23 +753,39 @@ body {
 .mobile-panel {
   width: 100%;
   max-height: 80vh;
-  background: var(--bg-card-soft);
-  border-radius: 18px 18px 0 0;
-  padding: 1rem 1.25rem 1.25rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 -20px 35px rgba(0, 0, 0, 0.7);
+  background: linear-gradient(180deg, rgba(15, 25, 48, 0.95), rgba(7, 13, 25, 0.98));
+  border-radius: 24px 24px 0 0;
+  padding: 1.5rem 1.5rem 1.5rem;
+  border-top: 2px solid rgba(53, 201, 255, 0.2);
+  box-shadow: 0 -30px 50px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(53, 201, 255, 0.1);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .mobile-panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.6rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .mobile-panel-header h2 {
   margin: 0;
   font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
 }
 
 .mobile-filters {
@@ -478,19 +795,35 @@ body {
 }
 
 .mobile-standings-link {
-  margin-top: 0.65rem;
+  margin-top: 1rem;
   width: 100%;
   border-radius: 999px;
   border: none;
   padding: 0.55rem 0.9rem;
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent), rgba(53, 201, 255, 0.8));
   color: #03101b;
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: 700;
+  font-size: 0.95rem;
   cursor: pointer;
+  border: 1px solid rgba(53, 201, 255, 0.3);
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 12px rgba(53, 201, 255, 0.3);
+}
+
+.mobile-standings-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(53, 201, 255, 0.4);
+  background: linear-gradient(135deg, rgba(53, 201, 255, 0.95), var(--accent));
 }
 
 /* Responsivo */
+
+@media (max-width: 1024px) {
+  .app-shell {
+    grid-template-columns: 320px 1fr;
+    gap: 1rem;
+  }
+}
 
 @media (max-width: 900px) {
   .app-root {
@@ -509,16 +842,17 @@ body {
     font-size: 0.82rem;
   }
 
-  .app-main {
-    display: block;
+  .app-shell {
+    grid-template-columns: 1fr;
     margin-top: 1rem;
   }
 
+  /* Hide the desktop sidebar on small screens; mobile panel replaces it */
   .sidebar {
     display: none;
   }
 
-  .article-section {
+  .main {
     margin-top: 0.75rem;
   }
 
@@ -537,4 +871,85 @@ body {
   .mobile-only {
     display: inline-flex;
   }
+}
+
+/* If the container gets too narrow stack the filters vertically */
+@media (max-width: 460px) {
+  .filters-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .filter-select {
+    width: 100%;
+    height: 44px;
+  }
+  .select-wrap::after { right: 14px; }
+}
+
+/* Mobile overlay styles are already present but ensure high z-index */
+.mobile-overlay {
+  z-index: 60;
+}
+/* ---- Standings widget ---- */
+
+.standings-card {
+  margin-top: 1rem;
+}
+
+/* contentor com scroll para não empurrar o artigo para baixo */
+.standings-table-wrapper {
+  margin-top: 0.75rem;
+  /* make the standings area grow and scroll internally rather than pushing layout */
+  max-height: 340px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+}
+
+/* Full standings table styles */
+.standings-full-wrapper {
+  margin-top: 0.8rem;
+  overflow-x: auto;
+}
+.standings-table.full {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+.standings-table.full th,
+.standings-table.full td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.team-logo {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  margin-right: 0.6rem;
+  vertical-align: middle;
+  border-radius: 4px;
+}
+.team-name { vertical-align: middle; }
+
+.full-standings .article-title { margin-top: 0.4rem; }
+
+
+/* linhas mais compactas, só texto */
+.standings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.standings-table th,
+.standings-table td {
+  padding: 0.35rem 0.5rem;
+}
+
+.standings-table .team-cell {
+  font-weight: 500;
+}
+
+.standings-table .numeric {
+  text-align: right;
 }
