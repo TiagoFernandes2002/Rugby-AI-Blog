@@ -953,3 +953,58 @@ body {
 .standings-table .numeric {
   text-align: right;
 }
+
+/* Full standings articles section */
+.full-standings-articles {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-soft);
+}
+
+.full-standings-articles h4 {
+  margin: 0 0 1rem 0;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.full-standings-articles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.full-standings-article-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.9rem 1rem;
+  background: var(--bg-card-soft);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.full-standings-article-item:hover {
+  background: rgba(53, 201, 255, 0.1);
+  border-color: var(--accent);
+  transform: translateX(4px);
+}
+
+.article-item-title {
+  font-weight: 600;
+  margin: 0;
+}
+
+.article-item-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+

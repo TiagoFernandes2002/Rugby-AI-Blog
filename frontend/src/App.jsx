@@ -220,6 +220,10 @@ function App() {
 
   function handleSelectArticle(id) {
     setSelectedArticleId(id);
+    // Close full standings when selecting an article from the list
+    if (fullStandings) {
+      setFullStandings(null);
+    }
   }
 
   function openMobilePanel() {
